@@ -85,10 +85,10 @@ namespace WebcamDemo
             // 初始化秒表，用于简单测量帧处理时间
             _stopwatch = new Stopwatch();
 
-            // (Optional) Create a new SortTracker instance with configurable parameters:
-            // - costThreshold: matching cost threshold for assigning detections to tracks (lower = stricter matching).
-            // - maxAge: number of frames to keep unmatched tracks before removal.
-            // - tailLength: length of the track history for visualization or analysis.
+            // （可选）使用可配置参数创建新的 SortTracker 实例：
+            // - costThreshold：将检测分配到轨道的匹配成本阈值（越低 = 匹配越严格）。
+            // - maxAge：在删除前保持未匹配轨道的帧数。
+            // - tailLength：用于可视化或分析的轨道历史长度。
             // 注意：没有一刀切的设置；这些参数通常需要一些调整才能为您的特定用例找到最佳平衡。
             _sortTracker = new SortTracker(costThreshold: 0.5f, maxAge: 5, tailLength: 30);
 
@@ -109,17 +109,17 @@ namespace WebcamDemo
                 //     有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 //
                 //   - OpenVinoExecutionProvider
-                //     Runs inference using Intel's OpenVINO toolkit for optimized performance on Intel hardware.
+                //     使用 Intel 的 OpenVINO 工具包运行推理，在 Intel 硬件上获得优化性能。
                 //
                 //   - CoreMLExecutionProvider
-                //     Executes inference using Apple's CoreML framework for efficient performance on macOS and iOS devices.
+                //     使用 Apple 的 CoreML 框架执行推理，在 macOS 和 iOS 设备上获得高效性能。
                 //
-                //   Important:  
-                //     - Choose the provider that matches your available hardware and performance requirements.  
-                //     - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-                //     - For detailed setup instructions and examples, see the README:
+                //   重要提示：  
+                //     - 选择与您可用硬件和性能要求匹配的提供程序。  
+                //     - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+                //     - 有关详细的设置说明和示例，请参见 README：
                 //
-                //   More information about execution providers and setup instructions can be found in the README:
+                //   有关执行提供程序和设置说明的更多信息可以在 README 中找到：
                 //   https://github.com/NickSwardh/YoloDotNet
 
                 ExecutionProvider = new CudaExecutionProvider(
@@ -135,9 +135,9 @@ namespace WebcamDemo
                 // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
             _dispatcher = Dispatcher.CurrentDispatcher;
@@ -146,20 +146,20 @@ namespace WebcamDemo
             _rect = new SKRect(0, 0, WEBCAM_WIDTH, bottom: WEBCAM_HEIGHT);
             _imageInfo = new SKImageInfo(WEBCAM_WIDTH, WEBCAM_HEIGHT, SKColorType.Bgra8888, SKAlphaType.Premul);
 
-            // Start the webcam capture on a background thread
+            // 在后台线程上启动网络摄像头捕获
             Task.Run(() => WebcamAsync());
         }
 
         private async Task WebcamAsync()
         {
-            // Initialize the webcam
+            // 初始化网络摄像头
             using var capture = new VideoCapture(0, VideoCaptureAPIs.DSHOW);
 
             capture.Set(VideoCaptureProperties.Fps, FPS);
             capture.Set(VideoCaptureProperties.FrameWidth, WEBCAM_WIDTH);
             capture.Set(VideoCaptureProperties.FrameHeight, WEBCAM_HEIGHT);
 
-            // If the camera supports MJPEG, it's much cheaper on CPU than uncompressed frames.
+            // 如果摄像头支持 MJPEG，它在 CPU 上比未压缩的帧更便宜。
             capture.Set(VideoCaptureProperties.FourCC, VideoWriter.FourCC('M', 'J', 'P', 'G'));
 
             using var mat = new Mat();
@@ -167,13 +167,13 @@ namespace WebcamDemo
 
             while (true)
             {
-                // Capture the current frame from the webcam
+                // 从网络摄像头捕获当前帧
                 capture.Read(mat);
                 
-                // Convert the frame to BGRA color space
+                // 将帧转换为 BGRA 颜色空间
                 Cv2.CvtColor(mat, bgraMat, ColorConversionCodes.BGR2BGRA);
 
-                // Create an SKBitmap from the BGRA Mat for processing
+                // 从 BGRA Mat 创建用于处理的 SKBitmap
                 using var frame = SKImage.FromPixels(_imageInfo, bgraMat.Data);
 
                 _currentFrame?.Dispose();
@@ -183,27 +183,27 @@ namespace WebcamDemo
                 {
                     _stopwatch.Restart();
 
-                    // Run object detection on the current frame
+                    // 在当前帧上运行对象检测
                     var results = _yolo.RunObjectDetection(_currentFrame, _confidenceThreshold, iou: 0.7);
 
                     _stopwatch.Stop();
 
                     if (_isFilteringEnabled)
-                        results = results.FilterLabels(["person", "cat", "dog"]);  // Optionally filter results to include only specific classes (e.g., "person", "cat", "dog")
+                        results = results.FilterLabels(["person", "cat", "dog"]);  // （可选）过滤结果以仅包含特定的类别（例如，"person", "cat", "dog"）
 
                     if (_isTrackingEnabled)
-                        results.Track(_sortTracker); // Optionally track objects using the SortTracker
+                        results.Track(_sortTracker); // （可选）使用 SortTracker 跟踪对象
 
-                    // Draw detection and tracking results on the current frame
+                    // 在当前帧上绘制检测和跟踪结果
                     _currentFrame.Draw(results);
                 }
                
-                // Update GUI
+                // 更新 GUI
                 await _dispatcher.InvokeAsync(() =>
                 {
-                    WebCamFrame.InvalidateVisual(); // Notify SKiaSharp to update the frame.
+                    WebCamFrame.InvalidateVisual(); // 通知 SKiaSharp 更新帧。
 
-                    // Display processing time and max fps
+                    // 显示处理时间和最大 fps
                     if (_runDetection)
                     {
                         var milliseconds = _stopwatch.Elapsed.TotalMilliseconds;

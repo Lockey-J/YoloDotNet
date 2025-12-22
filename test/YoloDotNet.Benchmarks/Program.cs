@@ -15,7 +15,7 @@ namespace YoloDotNet.Benchmarks
                 "To obtain accurate and meaningful performance measurements, please run in RELEASE mode."
             );
 
-            // Uncomment below code to run in debug during development.
+            // 在开发过程中取消注释以下代码以在调试中运行。
 
             DefaultConfig.Instance.WithOptions(ConfigOptions.DisableOptimizationsValidator);
 

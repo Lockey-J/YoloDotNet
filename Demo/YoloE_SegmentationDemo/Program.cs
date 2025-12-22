@@ -119,7 +119,7 @@ namespace YoloE_SegmentationDemo
             // 示例：
             // using var resultImage = image.Draw(results, _drawingOptions);
 
-            // Save image
+            // 保存图像
             var fileName = Path.Combine(_outputFolder, $"Segmentation.jpg");
             image.Save(fileName, SKEncodedImageFormat.Jpeg, 80);
 

@@ -60,26 +60,26 @@ namespace PoseEstimationDemo
                 // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
-                //     Runs inference entirely on the CPU. Universally supported on all hardware.
+                //     完全在 CPU 上运行推理。在所有硬件上通用支持。
                 //
                 //   - CudaExecutionProvider
-                //     Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-                //     Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,  
-                //     and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
-                //     See the TensorRT demo and documentation for detailed configuration and best practices.
+                //     使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+                //     可选择与 TensorRT 集成以进一步优化，支持 FP32、FP16  
+                //     和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。  
+                //     有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 //
                 //   - OpenVinoExecutionProvider
-                //     Runs inference using Intel's OpenVINO toolkit for optimized performance on Intel hardware.
+                //     使用 Intel 的 OpenVINO 工具包运行推理，在 Intel 硬件上获得优化性能。
                 //
                 //   - CoreMLExecutionProvider
-                //     Executes inference using Apple's CoreML framework for efficient performance on macOS and iOS devices.
+                //     使用 Apple 的 CoreML 框架执行推理，在 macOS 和 iOS 设备上获得高效性能。
                 //
-                //   Important:  
-                //     - Choose the provider that matches your available hardware and performance requirements.  
-                //     - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-                //     - For detailed setup instructions and examples, see the README:
+                //   重要提示：  
+                //     - 选择与您可用硬件和性能要求匹配的提供程序。  
+                //     - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+                //     - 有关详细的设置说明和示例，请参见 README：
                 //
-                //   More information about execution providers and setup instructions can be found in the README:
+                //   有关执行提供程序和设置说明的更多信息可以在 README 中找到：
                 //   https://github.com/NickSwardh/YoloDotNet
 
                 ExecutionProvider = new CpuExecutionProvider(SharedConfig.GetTestModelV11(ModelType.PoseEstimation)),

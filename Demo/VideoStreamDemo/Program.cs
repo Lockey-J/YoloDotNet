@@ -68,11 +68,11 @@ namespace VideoStreamDemo
 
         static void Main(string[] args)
         {
-            // (Optional) Create a new SortTracker instance with configurable parameters:
-            // - costThreshold: matching cost threshold for assigning detections to tracks (lower = stricter matching).
-            // - maxAge: number of frames to keep unmatched tracks before removal.
-            // - tailLength: length of the track history for visualization or analysis.
-            // Note: There is no one-size-fits-all setting; these parameters often require some tinkering to find the best balance for your specific use case.
+            // （可选）使用可配置参数创建新的 SortTracker 实例：
+            // - costThreshold：将检测分配到轨道的匹配成本阈值（越低 = 匹配越严格）。
+            // - maxAge：在删除前保持未匹配轨道的帧数。
+            // - tailLength：用于可视化或分析的轨道历史长度。
+            // 注意：没有一刀切的设置；这些参数通常需要一些调整才能为您的特定用例找到最佳平衡。
             _sortTracker = new SortTracker(0.5f, 5, 60);
 
             CreateOutputFolder();
@@ -87,26 +87,26 @@ namespace VideoStreamDemo
                 // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
-                //     Runs inference entirely on the CPU. Universally supported on all hardware.
+                //     完全在 CPU 上运行推理。在所有硬件上通用支持。
                 //
                 //   - CudaExecutionProvider
-                //     Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-                //     Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,  
-                //     and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
-                //     See the TensorRT demo and documentation for detailed configuration and best practices.
+                //     使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+                //     可选择与 TensorRT 集成以进一步优化，支持 FP32、FP16  
+                //     和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。  
+                //     有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 //
                 //   - OpenVinoExecutionProvider
-                //     Runs inference using Intel's OpenVINO toolkit for optimized performance on Intel hardware.
+                //     使用 Intel 的 OpenVINO 工具包运行推理，在 Intel 硬件上获得优化性能。
                 //
                 //   - CoreMLExecutionProvider
-                //     Executes inference using Apple's CoreML framework for efficient performance on macOS and iOS devices.
+                //     使用 Apple 的 CoreML 框架执行推理，在 macOS 和 iOS 设备上获得高效性能。
                 //
-                //   Important:  
-                //     - Choose the provider that matches your available hardware and performance requirements.  
-                //     - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-                //     - For detailed setup instructions and examples, see the README:
+                //   重要提示：  
+                //     - 选择与您可用硬件和性能要求匹配的提供程序。  
+                //     - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+                //     - 有关详细的设置说明和示例，请参见 README：
                 //
-                //   More information about execution providers and setup instructions can be found in the README:
+                //   有关执行提供程序和设置说明的更多信息可以在 README 中找到：
                 //   https://github.com/NickSwardh/YoloDotNet
 
                 ExecutionProvider = new CudaExecutionProvider(
@@ -133,7 +133,7 @@ namespace VideoStreamDemo
             // 列出系统上检测到的所有可用视频输入设备。
             var devices = Yolo.GetVideoDevices();
             Console.WriteLine();
-            Console.WriteLine("Detected video input devices (usable with VideoOptions):");
+            Console.WriteLine("检测到的视频输入设备（可用于 VideoOptions）：");
 
             if (devices.Count != 0)
             {
@@ -141,91 +141,91 @@ namespace VideoStreamDemo
                     Console.WriteLine($"  {device}");
             }
             else
-                Console.WriteLine("No input devices found");
+                Console.WriteLine("未找到输入设备");
 
             // 设置视频选项。
             yolo.InitializeVideo(new VideoOptions
             {
-                // 💡 Input video source. Accepted formats:
+                // 💡 输入视频源。接受的格式：
                 // 
-                // 1. Local video file:
-                //    Example: @"C:\videos\test.mp4"
+                // 1. 本地视频文件：
+                //    示例：@"C:\videos\test.mp4"
                 //
-                // 2. Livestream URL (e.g., RTMP, HTTP):
-                //    Example: "rtmp://your.rtmp.server/stream"
+                // 2. 直播流 URL（例如 RTMP、HTTP）：
+                //    示例："rtmp://your.rtmp.server/stream"
                 //
-                // 3. Video capture device (e.g., webcam):
-                //    Format: "device=<DeviceName>:<Width>:<Height>:<FPS>"
+                // 3. 视频捕获设备（例如网络摄像头）：
+                //    格式："device=<DeviceName>:<Width>:<Height>:<FPS>"
                 //
-                //    ⮞ On Windows:
-                //       Example: "device=Logitech BRIO:1920:1080:30"
+                //    ⮞ 在 Windows 上：
+                //       示例："device=Logitech BRIO:1920:1080:30"
                 //
-                //    ⮞ On Linux:
-                //       Example: "device=/dev/video0:1280:720:30"
+                //    ⮞ 在 Linux 上：
+                //       示例："device=/dev/video0:1280:720:30"
                 //
-                // 📌 The Width, Height, and FPS values must match a valid capture mode supported by your camera.
+                // 📌 宽度、高度和 FPS 值必须匹配您的摄像头支持的有效捕获模式。
                 //
-                // 🔍 To discover available video devices:
-                //    Use `yolo.GetVideoDevices()` — this method lists the names of available video capture devices.
-                //    It does NOT list supported resolutions or framerates.
+                // 🔍 要发现可用的视频设备：
+                //    使用 `yolo.GetVideoDevices()` — 此方法列出可用视频捕获设备的名称。
+                //    它不会列出支持的分辨率或帧率。
                 //
-                //    To determine valid width/height/fps combinations, refer to your device specifications
+                //    要确定有效的宽度/高度/FPS 组合，请参考您的设备规格
                 VideoInput = SharedConfig.GetTestVideo(VideoType.PeopleWalking),
 
-                // 💡 Optional: Path to save the processed output video file.
+                // 💡 可选：保存处理后输出视频文件的路径。
                 // 如果您不想保存输出，请保持未设置（null 或空）。
                 VideoOutput = Path.Combine(_outputFolder, "video_output.mp4"),
 
-                // 💡 Encoder to use when writing output.
+                // 💡 写入输出时使用的编码器。
                 // 注意：确保所选编码器与以下内容兼容：
                 //   - 您的操作系统和硬件
                 //   - FFmpeg 已编译所选编码器
                 //   - 输出文件格式/容器
                 VideoEncoder = VideoEncoder.H264Nvenc, // 使用 NVIDIA GPU 编码器 (h264_nvenc)。编码器替代方案请参见 Encoder 枚举注释。
 
-                // 💡 Frame rate for the output video.
-                // FrameRate.AUTO will attempt to match the input video’s frame rate.
+                // 💡 输出视频的帧率。
+                // FrameRate.AUTO 将尝试匹配 the input video’s frame rate.
                 FrameRate = FrameRate.AUTO,
 
-                // 💡 Output video width in pixels.
-                // Leave unset (0) to use the original width.
-                // Set to -2 to automatically calculate the width while maintaining the aspect ratio, based on the specified height.
-                // Note: Only one of Width or Height can be set to -2 at a time.
+                // 💡 输出视频的宽度（像素）。
+                // 保持未设置 (0) 以使用原始宽度。
+                // 设置为 -2 以在保持宽高比的同时根据指定高度自动计算宽度。
+                // 注意：一次只能将宽度或高度中的一个设置为 -2。
                 Width = 720,
 
-                // 💡 Output video height in pixels.
-                // Leave unset (0) to use the original height.
-                // Set to -2 to automatically calculate the height while maintaining the aspect ratio, based on the specified width.
-                // Note: Only one of Width or Height can be set to -2 at a time.
+                // 💡 输出视频的高度（像素）。
+                // 保持未设置 (0) 以使用原始高度。
+                // 设置为 -2 以在保持宽高比的同时根据指定宽度自动计算高度。
+                // 注意：一次只能将宽度或高度中的一个设置为 -2。
                 Height = -2,
 
-                // 💡 Compression quality for the output video (1-51).
-                // Lower values = better quality, larger file size.
-                // Higher values = stronger compression, smaller file size, lower quality.
-                // Recommended range: 20-35 for reasonable balance.
+                // 💡 输出视频的压缩质量（1-51）。
+                // 较低的值 = 更好的质量，更大的文件大小。
+                // 较高的值 = 更强的压缩，更小的文件大小，更低的质量。
+                // 推荐范围：20-35 以获得合理的平衡。
                 CompressionQuality = 30,
 
-                // 💡 Optional: Automatically split output video into chunks.
-                // Duration in seconds for each chunk.
-                // Example: 600 = split into 10-minute segments.
-                // 0 = do not split (generate a single file).
+                // 💡 可选：自动将输出视频分割成块。
+                // 每个块的持续时间（秒）。
+                // 示例：600 = 分割成 10 分钟的片段。
+                // 0 = 不分割（生成单个文件）。
                 VideoChunkDuration = 0,
 
-                // 💡 Process every Nth frame.
-                // 0 = process all frames (default).
-                // Example: 30 = process every 30th frame (useful for surveillance where full-frame detection is unnecessary).
+                // 💡 处理每隔 N 帧。
+                // 0 = 处理所有帧（默认）。
+                // 示例：30 = 处理每第 30 帧（对于不需要全帧检测的监控很有用）。
                 FrameInterval = 0,
 
-                // 💡 Optional: Define a specific segment of the video to process.
-                // Useful for testing or processing only a portion of the video.
-                // Note: Only applies to video files.
-                // 0 = start from the beginning.
+                // 💡 可选：定义要处理的视频的特定片段。
+                // 对于测试或仅处理视频的一部分很有用。
+                // 注意：仅适用于视频文件。
+                // 0 = 从开始处开始。
                 StartTimeSeconds = 0,
 
-                // 💡 Optional: Duration of the video segment to process in seconds.
-                // Useful for testing or processing only a portion of the video.
-                // Note: Only applies to video files.
-                // 0 = process until the end of the video.
+                // 💡 可选：要处理的视频片段的持续时间（秒）。
+                // 对于测试或仅处理视频的一部分很有用。
+                // 注意：仅适用于视频文件。
+                // 0 = 处理到视频结束。
                 DurationSeconds = 0
             });
 
@@ -241,7 +241,7 @@ namespace VideoStreamDemo
             var progress = 0;
 
             Console.WriteLine();
-            Console.WriteLine("Running Object Detection on Video with YOLOv11");
+            Console.WriteLine("使用 YOLOv11 在视频上运行对象检测");
             Console.WriteLine(new string('=', 80));
             Console.Write(progressStats);
 
@@ -254,7 +254,7 @@ namespace VideoStreamDemo
             // 您可以分配方法或 lambda 表达式。
             yolo.OnVideoFrameReceived = (SKBitmap frame, long frameIndex) =>
             {
-                // 💡 Run object detection on the current frame.
+                // 💡 在当前帧上运行对象检测。
                 // 参数：
                 //   - confidence：检测的最小置信度阈值 (0.0 - 1.0)。
                 //   - iou：非极大值抑制的交并比阈值。
@@ -262,21 +262,21 @@ namespace VideoStreamDemo
                 // 这将返回一个带有边界框和分数的检测对象列表。
                 var result = yolo.RunObjectDetection(frame, confidence: 0.25, iou: 0.5)
 
-                    // 💡 (Optional) Filter results to include only specified class labels.
+                    // 💡 （可选）过滤结果以仅包含指定的类别标签。
                     // 在本例中：仅保留 "person" 的检测结果。
                     .FilterLabels(["person", "cat", "dog"])
 
-                    // 💡 (Optional) Apply object tracking to maintain object identities across frames.
+                    // 💡 （可选）应用对象跟踪以在帧之间保持对象身份。
                     .Track(_sortTracker);
 
-                // 💡 (Optional) Draw detection and tracking results directly onto the current frame.
+                // 💡 （可选）直接在当前帧上绘制检测和跟踪结果。
                 // `_drawingOptions` controls appearance (e.g., color, thickness, font).
                 // 如果未提供，将应用默认绘制设置。
                 frame.Draw(result, _drawingOptions);
 
                 // 如需要，在此添加额外的处理逻辑...
 
-                // 💡 (Optional) Save the processed frame as an image file.
+                // 💡 （可选）将处理后的帧保存为图像文件。
                 // 用于调试、审计或生成图像数据集。
                 // 示例：
                 // var framePath = Path.Combine(_outputFolder, $"frame_{frameIndex}.jpg");
@@ -304,12 +304,12 @@ namespace VideoStreamDemo
 
                 if (progress == 100)
                 {
-                    Console.WriteLine("Video processing completed successfully.");
+                    Console.WriteLine("视频处理成功完成。");
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Warning: Video processing did not complete successfully.");
+                    Console.WriteLine("警告：视频处理未成功完成。");
                 }
 
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -357,10 +357,10 @@ namespace VideoStreamDemo
 
                 BoundingBoxOpacity = 128,
 
-                // Properties for drawing tracked tail. Default values:
+                // 用于绘制跟踪尾迹的属性。默认值：
                 DrawTrackedTail = true,
-                TailPaintColorStart = new SKColor(255, 105, 180),   // #FF69B4 - Blazing Bubblegum Bomber Pink
-                TailPaintColorEnd = SKColor.Empty.WithAlpha(0),              // Fade end of tail.
+                TailPaintColorStart = new SKColor(255, 105, 180),   // #FF69B4 - 耀眼的泡泡糖轰炸机粉色
+                TailPaintColorEnd = SKColor.Empty.WithAlpha(0),              // 尾迹淡化结束。
                 TailThickness = 4,
             };
         }
@@ -368,7 +368,7 @@ namespace VideoStreamDemo
         private static void PrintMetaData(VideoMetadata metaData)
         {
             Console.WriteLine();
-            Console.WriteLine($"Video MetaData:");
+            Console.WriteLine($"视频元数据：");
             Console.WriteLine(new string('=', 80));
 
             Console.ForegroundColor = ConsoleColor.Blue;

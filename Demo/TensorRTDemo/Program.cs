@@ -69,18 +69,18 @@ namespace TensorRTDemo
                 // 可用的执行提供程序：
                 // 
                 // - CpuExecutionProvider  
-                //   Runs inference entirely on the CPU. Universally supported but typically slower.
+                //   完全在 CPU 上运行推理。通用支持但通常较慢。
                 // 
                 // - CudaExecutionProvider  
-                //   Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-                //   Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,  
-                //   and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
-                //   See the TensorRT demo and documentation for detailed configuration and best practices.
+                //   使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+                //   可选择与 TensorRT 集成以进一步优化，支持 FP32、FP16  
+                //   和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。  
+                //   有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 // 
                 // 重要提示：  
-                // - Choose the provider that matches your available hardware and performance requirements.  
-                // - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-                // - For detailed setup instructions and examples, see the README:  
+                // - 选择与您可用硬件和性能要求匹配的提供程序。  
+                // - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+                // - 有关详细的设置说明和示例，请参见 README：  
                 //   https://github.com/NickSwardh/YoloDotNet
 
                 ExecutionProvider = new CudaExecutionProvider(
@@ -95,16 +95,16 @@ namespace TensorRTDemo
                     trtConfig: new TensorRt
                     {
                         Precision = TrtPrecision.FP16,
-                        // - FP32: Full precision (32-bit float). Default mode. Highest accuracy, default execution.
-                        // - FP16: Half precision (16-bit float). Offers improved performance on supported GPUs with minimal accuracy loss.
-                        // - INT8: Integer precision (8-bit). Fastest inference performance, but requires calibration.
+                        // - FP32: 全精度（32位浮点）。默认模式。最高精度，默认执行。
+                        // - FP16: 半精度（16位浮点）。在支持的 GPU 上提供改进的性能，精度损失最小。
+                        // - INT8: 整数精度（8位）。最快的推理性能，但需要校准。
                         //
-                        //   Note: INT8 mode enables **mixed precision execution**.
-                        //   TensorRT will use INT8 precision where supported, and automatically fall back to FP16 or FP32
-                        //   for layers or operations that are not quantizable — due to model structure, unsupported ops,
-                        //   dynamic ranges, or numerical stability concerns.
+                        //   注意：INT8 模式启用**混合精度执行**。
+                        //   TensorRT 将在支持的地方使用 INT8 精度，并自动回退到 FP16 或 FP32
+                        //   用于不可量化的层或操作 — 由于模型结构、不支持的运算、
+                        //   动态范围或数值稳定性问题。
                         //
-                        //   See Int8CalibrationCacheFile for calibration file requirements.
+                        //   有关校准文件要求，请参见 Int8CalibrationCacheFile。
 
                         BuilderOptimizationLevel = 3,
                         // 设置构建新引擎缓存时使用的构建器优化级别。更高级别
