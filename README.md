@@ -1,24 +1,24 @@
 # <img src="https://github.com/NickSwardh/YoloDotNet/assets/35733515/994287a9-556c-495f-8acf-1acae8d64ac0" height=24> YoloDotNet
 
-🚀 **Blazing-fast, production-ready YOLO inference for .NET**
+🚀 **为 .NET 打造的超快、生产就绪的 YOLO 推理**
 
-**YoloDotNet** is a fully featured C# library for real-time computer vision using **YOLOv5u–v12**, **YOLO-World**, and **YOLO-E** models.
+**YoloDotNet** 是一个功能齐全的 C# 库，用于使用 **YOLOv5u–v12**、**YOLO-World** 和 **YOLO-E** 模型进行实时计算机视觉。
 
-Built on **.NET 8** and **ONNX Runtime**, it delivers **high-performance, predictable inference** on **Windows, Linux, and macOS** — with explicit control over execution, memory, and preprocessing.
+基于 **.NET 8** 和 **ONNX Runtime** 构建，它在 **Windows、Linux 和 macOS** 上提供 **高性能、可预测的推理** —— 对执行、内存和预处理进行显式控制。
 
-No Python. No magic. Just fast, deterministic YOLO — done properly for .NET.
+无需 Python。没有魔法。只有快速、确定性的 YOLO —— 为 .NET 正确实现。
 
-## ⭐ Why YoloDotNet?
+## ⭐ 为什么选择 YoloDotNet？
 
-YoloDotNet is designed for developers who need:
+YoloDotNet 为需要以下功能的开发者设计：
 
-- ✅ **Pure .NET** — no Python runtime, no scripts
-- ✅ **Real performance** — CPU, CUDA / TensorRT, OpenVINO, CoreML
-- ✅ **Explicit configuration** — predictable accuracy and memory usage
-- ✅ **Production readiness** — engine caching, long-running stability
-- ✅ **Multiple vision tasks** — detection, OBB, segmentation, pose, classification
+- ✅ **纯 .NET** — 无需 Python 运行时，无需脚本
+- ✅ **真实性能** — CPU、CUDA / TensorRT、OpenVINO、CoreML
+- ✅ **显式配置** — 可预测的精度和内存使用
+- ✅ **生产就绪** — 引擎缓存、长期运行稳定性
+- ✅ **多种视觉任务** — 检测、OBB、分割、姿态估计、分类
 
-YoloDotNet is ideal for developers building **desktop apps, backend services, or real-time vision pipelines** in .NET who need predictable performance and explicit control.
+YoloDotNet 是构建 **桌面应用、后端服务或实时视觉管道** 的 .NET 开发者的理想选择，这些开发者需要可预测的性能和显式控制。
 
 ## 🆕 What’s New in v4.0
 
@@ -30,26 +30,26 @@ YoloDotNet is ideal for developers building **desktop apps, backend services, or
 
 📖 Full release history: [CHANGELOG.md](./CHANGELOG.md)
 
-## 🚀 Quick Start
+## 🚀 快速开始
 
-### 1️⃣ Install the core package
+### 1️⃣ 安装核心包
 ```bash
 dotnet add package YoloDotNet
 ```
-### 2️⃣ Install exactly one execution provider
+### 2️⃣ 安装一个执行提供程序
 ```bash
-# CPU (recommended starting point)
+# CPU（推荐的起点）
 dotnet add package YoloDotNet.ExecutionProvider.Cpu
 
-# Optional GPU acceleration
+# 可选的 GPU 加速
 dotnet add package YoloDotNet.ExecutionProvider.Cuda
 dotnet add package YoloDotNet.ExecutionProvider.OpenVino
 dotnet add package YoloDotNet.ExecutionProvider.CoreML
 ```
 
-💡 Note: The CUDA execution provider includes optional TensorRT acceleration. No separate TensorRT package is required.
+💡 注意：CUDA 执行提供程序包含可选的 TensorRT 加速。不需要单独的 TensorRT 包。
 
-### 3️⃣ Run object detection
+### 3️⃣ 运行目标检测
 ```csharp
 using SkiaSharp;
 using YoloDotNet;
@@ -68,113 +68,113 @@ image.Draw(results);
 image.Save("result.jpg");
 ```
 
-You’re now running YOLO inference in pure C#.
+You’re now running YOLO 推理。
 
-## 💡 Important: Accuracy Depends on Configuration
+## 💡 重要：精度取决于配置
 
-YOLO inference accuracy is **not automatic**.
+YOLO 推理精度 **不是自动的**。
 
-Preprocessing settings such as image resize mode, sampling method, and confidence/IoU thresholds **must match how the model was trained**. These settings directly control the accuracy–performance tradeoff and should be treated as part of the model itself.
+预处理设置如图像调整大小模式、采样方法和置信度/IoU 阈值 **必须与模型的训练方式匹配**。这些设置直接控制精度-性能权衡，应被视为模型本身的一部分。
 
-📖 **Before tuning models or comparing results, read:**  
-👉 [Accuracy & Configuration Guide](./AccuracyAndConfiguration.md)
+📖 **在调优模型或比较结果之前，请阅读：**  
+👉 [精度与配置指南](./AccuracyAndConfiguration.md)
 
-## Supported Tasks
+## 支持的任务
 
-| Classification | Object Detection | OBB Detection | Segmentation | Pose Estimation |
+| 分类 | 目标检测 | OBB 检测 | 分割 | 姿态估计 |
 |----------------|------------------|---------------|--------------|-----------------|
 | <img src="https://user-images.githubusercontent.com/35733515/297393507-c8539bff-0a71-48be-b316-f2611c3836a3.jpg" width=300> | <img src="https://user-images.githubusercontent.com/35733515/273405301-626b3c97-fdc6-47b8-bfaf-c3a7701721da.jpg" width=300> | <img src="https://github.com/NickSwardh/YoloDotNet/assets/35733515/d15c5b3e-18c7-4c2c-9a8d-1d03fb98dd3c" width=300> | <img src="https://github.com/NickSwardh/YoloDotNet/assets/35733515/3ae97613-46f7-46de-8c5d-e9240f1078e6" width=300> | <img src="https://github.com/NickSwardh/YoloDotNet/assets/35733515/b7abeaed-5c00-4462-bd19-c2b77fe86260" width=300> |
-| <sub>[image from pexels.com](https://www.pexels.com/photo/hummingbird-drinking-nectar-from-blooming-flower-in-garden-5344570/)</sub> | <sub>[image from pexels.com](https://www.pexels.com/photo/men-s-brown-coat-842912/)</sub> | <sub>[image from pexels.com](https://www.pexels.com/photo/bird-s-eye-view-of-watercrafts-docked-on-harbor-8117665/)</sub> | <sub>[image from pexels.com](https://www.pexels.com/photo/man-riding-a-black-touring-motorcycle-903972/)</sub> | <sub>[image from pexels.com](https://www.pexels.com/photo/woman-doing-ballet-pose-2345293/)</sub> |
+| <sub>[图片来自 pexels.com](https://www.pexels.com/photo/hummingbird-drinking-nectar-from-blooming-flower-in-garden-5344570/)</sub> | <sub>[图片来自 pexels.com](https://www.pexels.com/photo/men-s-brown-coat-842912/)</sub> | <sub>[图片来自 pexels.com](https://www.pexels.com/photo/bird-s-eye-view-of-watercrafts-docked-on-harbor-8117665/)</sub> | <sub>[图片来自 pexels.com](https://www.pexels.com/photo/man-riding-a-black-touring-motorcycle-903972/)</sub> | <sub>[图片来自 pexels.com](https://www.pexels.com/photo/woman-doing-ballet-pose-2345293/)</sub> |
 
-## 📁 Demos
+## 📁 示例
 
-Hands-on examples are available in the demo folder, covering common real-world scenarios:
+演示文件夹中提供了实践示例，涵盖常见的真实场景：
 
-👉 [Browse the demo projects](./Demo)
+👉 [浏览示例项目](./Demo)
 
-Including image inference, video streams, GPU acceleration, segmentation, and large-image workflows.
+包括图像推理、视频流、GPU 加速、分割和大图像工作流程。
 
-## Execution Providers
+## 执行提供程序
 
-| Execution Provider | Windows | Linux | macOS | Documentation |
+| 执行提供程序 | Windows | Linux | macOS | 文档 |
 | ------------------ | ------- | ----- | ----- | ------------- |
 | CPU | ✅ | ✅ | ✅ | [CPU README](./YoloDotNet.ExecutionProvider.Cpu/README.md) |
 | CUDA / TensorRT | ✅ | ✅ | ❌ | [CUDA README](./YoloDotNet.ExecutionProvider.Cuda/README.md) |
 | OpenVINO | ✅ | ✅ | ❌ | [OpenVINO README](./YoloDotNet.ExecutionProvider.OpenVino/README.md) |
 | CoreML | ❌ | ❌ | ✅ | [CoreML README](./YoloDotNet.ExecutionProvider.CoreML/README.md) |
 
-Each execution provider has its own README covering installation, runtime requirements, and provider-specific configuration.  
-Real-world usage examples and recommended settings can be found in the demo projects.
+每个执行提供程序都有自己的 README，涵盖安装、运行时要求和特定提供程序的配置。  
+真实世界使用示例和推荐设置可以在示例项目中找到。
 
-> ℹ️ Only **one** execution provider package may be referenced.  
-> Each provider ships its own native ONNX Runtime binaries; mixing providers will cause runtime conflicts.
+> ℹ️ 只能引用 **一个** 执行提供程序包。  
+> 每个提供程序都附带自己的原生 ONNX Runtime 二进制文件；混合使用提供程序将导致运行时冲突。
 
-## ⚡ Performance Characteristics
+## ⚡ 性能特征
 
-YoloDotNet focuses on stable, low-overhead inference behavior, where runtime cost is dominated by the selected execution provider and model, not framework overhead.
+YoloDotNet 专注于稳定、低开销的推理行为，其中运行时成本主要由所选的执行提供程序和模型决定，而不是框架开销。
 
-📊 See: [Benchmark methodology and results](/test/YoloDotNet.Benchmarks/README.md).
+📊 参见：[基准测试方法和结果](/test/YoloDotNet.Benchmarks/README.md)。
 
-Internal benchmarks using **BenchmarkDotNet** across classification, object detection, OBB, pose estimation, and segmentation show that:
+使用 **BenchmarkDotNet** 进行的内部基准测试涵盖分类、目标检测、OBB、姿态估计和分割，显示：
 
-- Inference latency is stable after warm-up
-- Performance scales cleanly with the selected execution provider (CPU → GPU → TensorRT)
-- TensorRT precision modes (FP32, FP16, INT8) behave as expected
-- Allocation behavior is predictable and bounded by output complexity
-- Overall throughput is determined primarily by the execution provider and model configuration
+- 推理延迟在预热后保持稳定
+- 性能随所选执行提供程序（CPU → GPU → TensorRT）清晰地扩展
+- TensorRT 精度模式（FP32、FP16、INT8）表现符合预期
+- 分配行为是可预测的，并受输出复杂性限制
+- 整体吞吐量主要由执行提供程序和模型配置决定
 
-For GPU-based providers, the first inference may be slower due to initialization or engine creation; subsequent runs operate at steady-state performance.
+对于基于 GPU 的提供程序，第一次推理可能由于初始化或引擎创建而较慢；后续运行以稳态性能运行。
 
-YoloDotNet is suitable for:
-- Real-time pipelines
-- Long-running services
-- High-resolution image processing
-- Deterministic production workloads
+YoloDotNet 适用于：
+- 实时管道
+- 长期运行的服务
+- 高分辨率图像处理
+- 确定性生产工作负载
 
-## 🚀 Modular Execution Providers
+## 🚀 模块化执行提供程序
 
-YoloDotNet uses a **fully modular execution architecture** that gives developers explicit control over native dependencies and runtime behavior.
+YoloDotNet 使用 **完全模块化的执行架构**，使开发人员能够对原生依赖项和运行时行为进行显式控制。
 
-- The core package is execution-provider agnostic
-- Execution providers are delivered as separate NuGet packages
-- Native ONNX Runtime dependencies are isolated per provider
+- 核心包与执行提供程序无关
+- 执行提供程序作为单独的 NuGet 包提供
+- 原生 ONNX Runtime 依赖项按提供程序隔离
 
-### Why this matters
-- Fewer native dependency conflicts
-- Cleaner and more predictable deployment
-- Consistent behavior across platforms and runtimes
-- Easier integration into production and long-running services
+### 为什么这很重要
+- 更少的原生依赖冲突
+- 更清洁和更可预测的部署
+- 跨平台和运行时的一致行为
+- 更容易集成到生产和长期运行的服务中
 
-💡 **Note for existing users**  
-Projects upgrading from earlier versions must reference exactly one execution provider package and update provider setup accordingly. Existing models remain fully compatible.
+💡 **现有用户注意**  
+从早期版本升级的项目必须引用一个执行提供程序包并相应地更新提供程序设置。现有模型保持完全兼容。
 
-## Support YoloDotNet
+## 支持 YoloDotNet
 YoloDotNet is built and maintained independently. If you’ve found my project helpful, consider supporting its development:
 
-⭐ Star the repository\
-💬 Share feedback\
-🤝 Consider sponsoring development
+⭐ 为仓库加星\
+💬 分享反馈\
+🤝 考虑赞助开发
 
 [![GitHub Sponsors](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/NickSwardh) [![PayPal](https://img.shields.io/badge/Support-PayPal-00457C?logo=paypal&logoColor=white)](https://paypal.me/nickswardh)
 
 
-Thank you. ❤️
+谢谢您。 ❤️
 
-## References & Acknowledgements
+## 参考资料与致谢
 
 https://github.com/ultralytics/ultralytics \
 https://github.com/sstainba/Yolov8.Net \
 https://github.com/mentalstack/yolov5-net
 
-## License
+## 许可证
 
-YoloDotNet is © 2023–2025 Niklas Swärd ([GitHub](https://github.com/NickSwardh/YoloDotNet))  
-Licensed under the **GNU General Public License v3.0 or later**.
+YoloDotNet 版权所有 © 2023–2025 Niklas Swärd ([GitHub](https://github.com/NickSwardh/YoloDotNet))  
+根据 **GNU General Public License v3.0 或更高版本** 授权。
 
-Commercial use is permitted under the terms of the GPL v3; however, derivative works must comply with the same license.
+根据 GPL v3 条款允许商业使用；但是，衍生作品必须遵守相同的许可证。
 
 ![License: GPL v3 or later](https://img.shields.io/badge/License-GPL_v3_or_later-blue)  
-See the [LICENSE](./LICENSE.txt) file for the full license text.
+完整的许可证文本请参见 [LICENSE](./LICENSE.txt) 文件。
 
-This software is provided “as is”, without warranty of any kind.  
-The author is not liable for any damages arising from its use.
+This software is provided “as is”, 不作任何形式的保证。  
+作者对其使用所造成的任何损害不承担责任。
