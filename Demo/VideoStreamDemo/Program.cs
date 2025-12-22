@@ -17,48 +17,48 @@ using YoloDotNet.Video;
 namespace VideoStreamDemo
 {
     /// <summary>
-    /// Demonstrates object detection and tracking on videos or livestreams using the YoloDotNet library.
+    /// 演示使用 YoloDotNet 库在视频或直播流上进行对象检测和跟踪。
     /// 
-    /// Requires FFmpeg and FFprobe to be installed and added to your system PATH:
+    /// 需要安装 FFmpeg 和 FFprobe 并添加到系统 PATH：
     /// https://ffmpeg.org/download.html
     ///
-    /// This demo loads a video source (file, livestream, or webcam), runs object detection and optional tracking on each frame,
-    /// draws the results (bounding boxes, labels, confidence scores, and tracked tails), and optionally saves the output video.
+    /// 此演示加载视频源（文件、直播流或摄像头），在每一帧上运行对象检测和可选跟踪，
+    /// 绘制结果（边界框、标签、置信度分数和跟踪轨迹），并可选择保存输出视频。
     ///
-    /// It showcases:
-    /// - Model initialization with configurable hardware and preprocessing options
-    /// - Real-time object detection using YoloDotNet on video streams
-    /// - Filtering detections by class labels
-    /// - Multi-object tracking across frames using the SORT tracker
-    /// - Rendering detection and tracking results directly on video frames
-    /// - Saving processed video output and optionally splitting into chunks
-    /// - Progress reporting and end-of-stream handling with customizable callbacks
+    /// 它展示了：
+    /// - 使用可配置的硬件和预处理选项进行模型初始化
+    /// - 使用 YoloDotNet 在视频流上进行实时对象检测
+    /// - 按类别标签过滤检测结果
+    /// - 使用 SORT 跟踪器跨帧跟踪多个对象
+    /// - 直接在视频帧上渲染检测和跟踪结果
+    /// - 保存处理后的视频输出并可选择分割成块
+    /// - 使用可自定义回调进行进度报告和流结束处理
     ///
-    /// Example video source inputs:
-    /// - Local video file path:
+    /// 视频源输入示例：
+    /// - 本地视频文件路径：
     ///     Example: @"C:\videos\test.mp4"
     ///
-    /// - Livestream URL (RTMP, HTTP, etc.):
-    ///     Example: "rtmp://your.server/stream"
+    /// - 直播流 URL (RTMP, HTTP, 等):
+    ///     示例: "rtmp://your.server/stream"
     ///
-    /// - Video capture device (webcam) with explicit resolution and frame rate:
-    ///     Format: "device=<DeviceName>:<Width>:<Height>:<FPS>"
+    /// - 带有明确分辨率和帧率的视频捕获设备（网络摄像头）:
+    ///     格式: "device=<DeviceName>:<Width>:<Height>:<FPS>"
     ///
-    ///     Windows example: "device=Logitech BRIO:1920:1080:30"
-    ///     Linux example:   "device=/dev/video0:1280:720:30"
+    ///     Windows 示例: "device=Logitech BRIO:1920:1080:30"
+    ///     Linux 示例:   "device=/dev/video0:1280:720:30"
     ///
-    ///     Note: Width, Height, and FPS must match a capture mode supported by your device.
+    ///     注意: 宽度、高度和帧率必须与设备支持的捕获模式匹配。
     ///
-    /// Execution providers:
-    /// - CpuExecutionProvider: runs inference on CPU, universally supported but slower.
-    /// - CudaExecutionProvider: uses NVIDIA GPU via CUDA for accelerated performance.
-    ///   Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,
-    ///   and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.
+    /// 执行提供程序:
+    /// - CpuExecutionProvider: 在 CPU 上运行推理，通用支持但速度较慢。
+    /// - CudaExecutionProvider: 通过 CUDA 使用 NVIDIA GPU 获得加速性能。
+    ///   可选地与 TensorRT 集成以进一步优化，支持 FP32、FP16
+    ///   和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。
     ///
-    /// Important notes:
-    /// - Choose the execution provider based on your hardware and performance requirements.
-    /// - FFmpeg and FFprobe must be added to your system PATH variable. Download and install: https://ffmpeg.org/download.html
-    /// - The demo creates an output folder on the desktop to store processed results.
+    /// 重要说明:
+    /// - 根据硬件和性能要求选择执行提供程序。
+    /// - FFmpeg 和 FFprobe 必须添加到系统 PATH 变量。下载并安装: https://ffmpeg.org/download.html
+    /// - 演示在桌面上创建输出文件夹以存储处理结果。
     /// </summary>
     internal class Program
     {
@@ -79,12 +79,12 @@ namespace VideoStreamDemo
             SetDrawingOptions();
             Console.CursorVisible = false;
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             using var yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
                 //     Runs inference entirely on the CPU. Universally supported on all hardware.
@@ -111,26 +111,26 @@ namespace VideoStreamDemo
 
                 ExecutionProvider = new CudaExecutionProvider(
 
-                    // Path or byte[] of the ONNX model to load.
+                    // 要加载的 ONNX 模型的路径或字节数组。
                     model: SharedConfig.GetTestModelV11(ModelType.ObjectDetection),
 
-                    // GPU device Id to use for inference. -1 = CPU, 0+ = GPU device Id.
+                    // 用于推理的GPU设备ID。-1 = CPU，0+ = GPU设备ID。
                     gpuId: 0),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 在不保持宽高比的情况下调整图像大小以适应目标大小。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
-            // Print model type
+            // 打印模型类型
             Console.WriteLine($"Loaded ONNX Model: {yolo.ModelInfo}");
 
-            // List all available video input devices detected on the system.
+            // 列出系统上检测到的所有可用视频输入设备。
             var devices = Yolo.GetVideoDevices();
             Console.WriteLine();
             Console.WriteLine("Detected video input devices (usable with VideoOptions):");
@@ -143,7 +143,7 @@ namespace VideoStreamDemo
             else
                 Console.WriteLine("No input devices found");
 
-            // Set the video options.
+            // 设置视频选项。
             yolo.InitializeVideo(new VideoOptions
             {
                 // 💡 Input video source. Accepted formats:
@@ -173,15 +173,15 @@ namespace VideoStreamDemo
                 VideoInput = SharedConfig.GetTestVideo(VideoType.PeopleWalking),
 
                 // 💡 Optional: Path to save the processed output video file.
-                // Leave unset (null or empty) if you do not want to save output.
+                // 如果您不想保存输出，请保持未设置（null 或空）。
                 VideoOutput = Path.Combine(_outputFolder, "video_output.mp4"),
 
                 // 💡 Encoder to use when writing output.
-                // Note: Make sure the selected encoder is compatible with:
-                //   - Your operating system and hardware
-                //   - FFmpeg is compiled with the selected encoder
-                //   - The output file format/container
-                VideoEncoder = VideoEncoder.H264Nvenc, // Use NVIDIA GPU encoder (h264_nvenc). See Encoder enum comments for alternatives.
+                // 注意：确保所选编码器与以下内容兼容：
+                //   - 您的操作系统和硬件
+                //   - FFmpeg 已编译所选编码器
+                //   - 输出文件格式/容器
+                VideoEncoder = VideoEncoder.H264Nvenc, // 使用 NVIDIA GPU 编码器 (h264_nvenc)。编码器替代方案请参见 Encoder 枚举注释。
 
                 // 💡 Frame rate for the output video.
                 // FrameRate.AUTO will attempt to match the input video’s frame rate.
@@ -229,7 +229,7 @@ namespace VideoStreamDemo
                 DurationSeconds = 0
             });
 
-            // Display basic video metadata before processing begins.
+            // 在处理开始前显示基本视频元数据。
             var metadata = yolo.GetVideoMetaData();
             PrintMetaData(metadata);
 
@@ -245,25 +245,25 @@ namespace VideoStreamDemo
             Console.WriteLine(new string('=', 80));
             Console.Write(progressStats);
 
-            // Assign a handler for incoming video frames.
-            // 💡 This Action is invoked *once per processed frame*.
-            // It provides:
-            //   - `frame`: The current video frame as an SKBitmap.
-            //   - `frameIndex`: The zero-based index of the frame in the sequence.
+            // 为传入的视频帧分配处理器。
+            // 💡 此 Action *每处理一帧调用一次*。
+            // 它提供：
+            //   - `frame`：当前视频帧作为 SKBitmap。
+            //   - `frameIndex`：序列中帧的从零开始的索引。
             //
-            // You can assign either a method or a lambda expression.
+            // 您可以分配方法或 lambda 表达式。
             yolo.OnVideoFrameReceived = (SKBitmap frame, long frameIndex) =>
             {
                 // 💡 Run object detection on the current frame.
-                // Parameters:
-                //   - confidence: Minimum confidence threshold for detections (0.0 - 1.0).
-                //   - iou: Intersection-over-union threshold for non-maximum suppression.
+                // 参数：
+                //   - confidence：检测的最小置信度阈值 (0.0 - 1.0)。
+                //   - iou：非极大值抑制的交并比阈值。
                 //
-                // This will return a list of detected objects with bounding boxes and scores.
+                // 这将返回一个带有边界框和分数的检测对象列表。
                 var result = yolo.RunObjectDetection(frame, confidence: 0.25, iou: 0.5)
 
                     // 💡 (Optional) Filter results to include only specified class labels.
-                    // In this case: keep only detections of "person".
+                    // 在本例中：仅保留 "person" 的检测结果。
                     .FilterLabels(["person", "cat", "dog"])
 
                     // 💡 (Optional) Apply object tracking to maintain object identities across frames.
@@ -271,18 +271,18 @@ namespace VideoStreamDemo
 
                 // 💡 (Optional) Draw detection and tracking results directly onto the current frame.
                 // `_drawingOptions` controls appearance (e.g., color, thickness, font).
-                // If not provided, default drawing settings will be applied.
+                // 如果未提供，将应用默认绘制设置。
                 frame.Draw(result, _drawingOptions);
 
-                // Additional processing logic here if needed...
+                // 如需要，在此添加额外的处理逻辑...
 
                 // 💡 (Optional) Save the processed frame as an image file.
-                // Useful for debugging, auditing, or generating image datasets.
-                // Example:
+                // 用于调试、审计或生成图像数据集。
+                // 示例：
                 // var framePath = Path.Combine(_outputFolder, $"frame_{frameIndex}.jpg");
                 // frame.Save(framePath, SKEncodedImageFormat.Jpeg, 80);
 
-                // Display progress.
+                // 显示进度。
                 progress = (int)((double)(frameIndex) / metadata.TargetTotalFrames * 100);
                 var str = $"{progress}% [frame {frameIndex} of {metadata.TargetTotalFrames}]";
 
@@ -292,11 +292,11 @@ namespace VideoStreamDemo
                 Console.Write(str);
             };
 
-            // Assign a handler for when video processing finishes.
-            // 💡 This Action is invoked *exactly once* at the end of video processing.
-            // It is useful for cleanup, reporting, logging, or triggering downstream actions.
+            // 为视频处理结束时分配处理器。
+            // 💡 此 Action *仅调用一次* 在视频处理结束时。
+            // 它用于清理、报告、记录或触发下游操作。
             //
-            // You can assign either a method or a lambda expression.
+            // 您可以分配方法或 lambda 表达式。
             yolo.OnVideoEnd = () =>
             {
                 Console.WriteLine();
@@ -315,7 +315,7 @@ namespace VideoStreamDemo
                 Console.ForegroundColor = ConsoleColor.Gray;
             };
 
-            // Start processing the video stream.
+            // 开始处理视频流。
             yolo.StartVideoProcessing();
 
             DisplayOutputFolder();
@@ -325,7 +325,7 @@ namespace VideoStreamDemo
 
         private static void SetDrawingOptions()
         {
-            // Set options for drawing
+            // 设置绘制选项
             _drawingOptions = new DetectionDrawingOptions
             {
                 DrawBoundingBoxes = true,
@@ -333,12 +333,12 @@ namespace VideoStreamDemo
                 DrawLabels = true,
                 EnableFontShadow = true,
 
-                // SKTypeface defines the font used for text rendering.
-                // SKTypeface.Default uses the system default font.
-                // To load a custom font:
-                //   - Use SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) to load by font family name (if installed).
-                //   - Use SKTypeface.FromFile("path/to/font.ttf") to load a font directly from a file.
-                // Example:
+                // SKTypeface 定义用于文本渲染的字体。
+                // SKTypeface.Default 使用系统默认字体。
+                // 加载自定义字体：
+                //   - 使用 SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) 按字体系列名称加载（如果已安装）。
+                //   - 使用 SKTypeface.FromFile("path/to/font.ttf") 直接从文件加载字体。
+                // 示例：
                 //   Font = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal)
                 //   Font = SKTypeface.FromFile("C:\\Fonts\\CustomFont.ttf")
                 Font = SKTypeface.Default,
@@ -349,11 +349,11 @@ namespace VideoStreamDemo
                 EnableDynamicScaling = true,
                 BorderThickness = 2,
 
-                // By default, YoloDotNet automatically assigns colors to bounding boxes.
-                // To override these default colors, you can define your own array of hexadecimal color codes.
-                // Each element in the array corresponds to the class index in your model.
-                // Example:
-                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // Color per class id
+                // 默认情况下，YoloDotNet 自动为边界框分配颜色。
+                // 要覆盖这些默认颜色，您可以定义自己的十六进制颜色代码数组。
+                // 数组中的每个元素对应模型中的类别索引。
+                // 示例：
+                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // 每个类别 ID 的颜色
 
                 BoundingBoxOpacity = 128,
 

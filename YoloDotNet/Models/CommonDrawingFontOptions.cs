@@ -8,32 +8,32 @@ namespace YoloDotNet.Models
     public class CommonDrawingFontOptions
     {
         /// <summary>
-        /// Font used for drawing labels and confidence scores.
+        /// 用于绘制标签和置信度分数的字体。
         /// </summary>
         public SKTypeface Font { get; set; } = SKTypeface.Default;
 
         /// <summary>
-        /// Font size.
+        /// 字体大小。
         /// </summary>
         public float FontSize { get; set; } = ImageConfig.FONT_SIZE;
 
         /// <summary>
-        /// Font used for drawing labels and confidence scores.
+        /// 用于绘制标签和置信度分数的字体颜色。
         /// </summary>
         public SKColor FontColor { get; set; } = ImageConfig.FontColor;
 
         /// <summary>
-        /// Whether to enable shadow effect behind text.
+        /// 是否启用文本后面的阴影效果。
         /// </summary>
         public bool EnableFontShadow { get; set; } = true;
 
         /// <summary>
-        /// Whether to dynamically scale font size and border thickness based on image resolution.
+        /// 是否根据图像分辨率动态缩放字体大小和边框粗细。
         /// </summary>
         public bool EnableDynamicScaling { get; set; } = true;
 
         /// <summary>
-        /// Whether to draw label background.
+        /// 是否绘制标签背景。
         /// </summary>
         public bool DrawLabelBackground { get; set; } = true;
     }

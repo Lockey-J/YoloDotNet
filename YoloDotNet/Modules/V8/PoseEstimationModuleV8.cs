@@ -22,7 +22,7 @@ namespace YoloDotNet.Modules.V8
             var inferenceResult = _yoloCore.Run(image);
             var detections = PoseEstimateImage(inferenceResult, confidence, iou);
 
-            // Convert to List<PoseEstimation>
+            // 转换为 List<PoseEstimation>
             var results = new List<PoseEstimation>(detections.Length);
             for (int i = 0; i < detections.Length; i++)
                 results.Add((PoseEstimation)detections[i]);

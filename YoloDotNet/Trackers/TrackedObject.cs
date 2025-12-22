@@ -14,18 +14,18 @@ namespace YoloDotNet.Trackers
 
         public void TrackBoundingBox(IDetection detection)
         {
-            // Update boundingbox
+            // 更新边界框
             BoundingBox = detection;
 
-            // Store current boundingbox center coordinate
+            // 存储当前边界框中心坐标
             var box = detection.BoundingBox;
 
-            // Update tail
+            // 更新轨迹
             detection.Tail = _tailTracker.GetTail();
 
-            _tailTracker.AddTailPoint(new SKPointI(box.MidX, box.MidY)); // Store center of boundingbox.
+            _tailTracker.AddTailPoint(new SKPointI(box.MidX, box.MidY)); // 存储边界框的中心。
 
-            // Update Kalman filter
+            // 更新卡尔曼滤波器
             Kalman.Update(box.MidX, box.MidY);
         }
 

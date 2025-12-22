@@ -23,7 +23,7 @@ namespace YoloDotNet.Video.Services
                    EnableRaisingEvents = true,
                };
 
-            // Add each argument safely to ArgumentList
+            // 安全地将每个参数添加到 ArgumentList
             foreach (var arg in arguments)
                 process.StartInfo.ArgumentList.Add(arg);
 

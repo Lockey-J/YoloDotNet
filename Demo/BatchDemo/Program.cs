@@ -14,19 +14,19 @@ using YoloDotNet.Test.Common;
 namespace BatchDemo
 {
     /// <summary>
-    /// Demonstrates batch object detection on static images using YoloDotNet, with parallel
-    /// processing for faster inference across large datasets.
+    /// 演示使用 YoloDotNet 对静态图像进行批量对象检测，具有并行
+    /// 处理功能，可在大数据集上实现更快的推理。
     ///
-    /// This demo:
-    /// - Loads images from a folder
-    /// - Runs YOLO object detection in parallel
-    /// - Draws detection results (boxes, labels, confidence scores)
-    /// - Saves annotated images to a desktop results folder
+    /// 此演示：
+    /// - 从文件夹加载图像
+    /// - 并行运行 YOLO 对象检测
+    /// - 绘制检测结果（边界框、标签、置信度分数）
+    /// - 将标注图像保存到桌面结果文件夹
     ///
-    /// Key highlights:
-    /// - Parallel batch processing to accelerate inference
-    /// - Flexible execution provider configuration (CPU, CUDA, TensorRT, OpenVINO)
-    /// - Customizable drawing options for text, colors, and bounding box styling
+    /// 主要亮点：
+    /// - 并行批处理以加速推理
+    /// - 灵活的执行提供程序配置（CPU、CUDA、TensorRT、OpenVINO）
+    /// - 可自定义的绘制选项，用于文本、颜色和边界框样式
     /// </summary>
     internal class Program
     {
@@ -38,72 +38,72 @@ namespace BatchDemo
             CreateOutputFolder();
             SetDrawingOptions();
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             using var yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
-                //     Runs inference entirely on the CPU. Universally supported on all hardware.
+                //     完全在 CPU 上运行推理。所有硬件上通用支持。
                 //
                 //   - CudaExecutionProvider
-                //     Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-                //     Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,  
-                //     and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
-                //     See the TensorRT demo and documentation for detailed configuration and best practices.
+                //     使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+                //     可选地与 TensorRT 集成以进一步优化，支持 FP32、FP16  
+                //     和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。  
+                //     有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 //
                 //   - OpenVinoExecutionProvider
-                //     Runs accelerated inference on Intel GPUs for optimized performance on Intel hardware.
+                //     在 Intel GPU 上运行加速推理，在 Intel 硬件上获得优化性能。
                 //
                 //   - CoreMLExecutionProvider
-                //     Runs accelerated inference on Apple GPUs for efficient performance on macOS and iOS devices.
+                //     在 Apple GPU 上运行加速推理，在 macOS 和 iOS 设备上获得高效性能。
                 //
-                //   Important:  
-                //     - Choose the provider that matches your available hardware and performance requirements.  
-                //     - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-                //     - For detailed setup instructions and examples, see the README:
+                //   重要提示：  
+                //     - 选择与您可用硬件和性能要求匹配的提供程序。  
+                //     - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+                //     - 有关详细的设置说明和示例，请参见 README：
                 //
-                //   More information about execution providers and setup instructions can be found in the README:
+                //   有关执行提供程序和设置说明的更多信息可以在 README 中找到：
                 //   https://github.com/NickSwardh/YoloDotNet
 
                 ExecutionProvider = new CudaExecutionProvider(
 
-                    // Path or byte[] of the ONNX model to load.
+                    // 要加载的 ONNX 模型的路径或字节数组。
                     model: SharedConfig.GetTestModelV11(ModelType.ObjectDetection),
 
-                    // GPU device Id to use for inference. -1 = CPU, 0+ = GPU device Id.
+                    // 用于推理的GPU设备ID。-1 = CPU，0+ = GPU设备ID。
                     gpuId: 0),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 在不保持宽高比的情况下调整图像大小以适应目标大小。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
-            // Print model type
+            // 打印模型类型
             Console.WriteLine($"Loaded ONNX Model: {yolo.ModelInfo}");
 
-            // Collect images
+            // 收集图像
             var images = Directory.GetFiles(@"path\to\image\folder");
 
             Parallel.ForEach(images, image =>
             {
-                // Load input image as SKBitmap (or SKImage)
+                // 将输入图像加载为 SKBitmap（或 SKImage）
                 using var img = SKBitmap.Decode(image);
 
-                // Run object detection inference
+                // 运行对象检测推理
                 var results = yolo.RunObjectDetection(img, 0.25, 0.7);
 
-                // Draw results using custom _drawingOptions (optional)
+                // 使用自定义 _drawingOptions 绘制结果（可选）
                 img.Draw(results, _drawingOptions);
 
-                // Save image
+                // 保存图像
                 var fileName = Path.Combine(_outputFolder, $"ObjectDetection_{Guid.NewGuid()}.jpg");
                 img.Save(fileName, SKEncodedImageFormat.Jpeg, 80);
             });
@@ -113,7 +113,7 @@ namespace BatchDemo
 
         private static void SetDrawingOptions()
         {
-            // Set options for drawing
+            // 设置绘制选项
             _drawingOptions = new DetectionDrawingOptions
             {
                 DrawBoundingBoxes = true,
@@ -121,12 +121,12 @@ namespace BatchDemo
                 DrawLabels = true,
                 EnableFontShadow = true,
 
-                // SKTypeface defines the font used for text rendering.
-                // SKTypeface.Default uses the system default font.
-                // To load a custom font:
-                //   - Use SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) to load by font family name (if installed).
-                //   - Use SKTypeface.FromFile("path/to/font.ttf") to load a font directly from a file.
-                // Example:
+                // SKTypeface 定义用于文本渲染的字体。
+                // SKTypeface.Default 使用系统默认字体。
+                // 加载自定义字体：
+                //   - 使用 SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) 按字体系列名称加载（如果已安装）。
+                //   - 使用 SKTypeface.FromFile("path/to/font.ttf") 直接从文件加载字体。
+                // 示例：
                 //   Font = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal)
                 //   Font = SKTypeface.FromFile("C:\\Fonts\\CustomFont.ttf")
                 Font = SKTypeface.Default,
@@ -137,23 +137,23 @@ namespace BatchDemo
                 EnableDynamicScaling = true,
                 BorderThickness = 2,
 
-                // By default, YoloDotNet automatically assigns colors to bounding boxes.
-                // To override these default colors, you can define your own array of hexadecimal color codes.
-                // Each element in the array corresponds to the class index in your model.
-                // Example:
-                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // Color per class id
+                // 默认情况下，YoloDotNet 自动为边界框分配颜色。
+                // 要覆盖这些默认颜色，您可以定义自己的十六进制颜色代码数组。
+                // 数组中的每个元素对应模型中的类别索引。
+                // 示例：
+                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // 每个类别 ID 的颜色
 
                 BoundingBoxOpacity = 128,
 
-                // The following options configure tracked object tails, which visualize 
-                // the movement path of detected objects across a sequence of frames or images.
+                // 以下选项配置跟踪对象尾迹，用于可视化
+                // 检测对象在一系列帧或图像中的移动路径。
                 //
-                // ⚠ Tracking is not recommended when running batch inference with parallelism.
-                // For tracking (e.g., using SortTracker) to work correctly, frames must be processed
-                // sequentially so that the tracker can maintain object state across frames.
-                // Running tracking in parallel on independent frames will produce incorrect or unpredictable results.
+                // ⚠ 在使用并行处理运行批量推理时不建议使用跟踪。
+                // 为了使跟踪（例如，使用 SortTracker）正常工作，必须按顺序处理帧
+                // 以便跟踪器可以在帧之间维持对象状态。
+                // 在独立的帧上并行运行跟踪将产生不正确或不可预测的结果。
                 //
-                // This functionality is demonstrated in the VideoStream demo, where sequential processing is enforced.
+                // 此功能在 VideoStream 演示中进行了展示，其中强制执行顺序处理。
                 //
                 // DrawTrackedTail = false,
                 // TailPaintColorEnd = new(),

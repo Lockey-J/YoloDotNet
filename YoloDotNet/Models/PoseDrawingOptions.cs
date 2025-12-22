@@ -7,17 +7,17 @@ namespace YoloDotNet.Models
     public class PoseDrawingOptions : CommonBoundingBoxOptions
     {
         /// <summary>
-        /// Confidence threshold for displaying keypoints.
+        /// 显示关键点的置信度阈值。
         /// </summary>
         public double PoseConfidence { get; set; } = ImageConfig.POSE_KEYPOINT_THRESHOLD;
 
         /// <summary>
-        /// Default color used to draw keypoints when no specific colors or markers are provided via <see cref="KeyPointMarkers"/>.
+        /// 当未通过 <see cref="KeyPointMarkers"/> 提供特定颜色或标记时，用于绘制关键点的默认颜色。
         /// </summary>
         public SKColor DefaultPoseColor { get; set; } = ImageConfig.PoseMarkerColor;
 
         /// <summary>
-        /// User-defined mapping to determine how to connect keypoints and specify associated colors.
+        /// 用户定义的映射，用于确定如何连接关键点并指定相关颜色。
         /// </summary>
         public KeyPointMarker[] KeyPointMarkers { get; set; } = [];
 
@@ -44,25 +44,25 @@ namespace YoloDotNet.Models
     }
 
     /// <summary>
-    /// Represents a mapping between keypoints and their connections.
+    /// 表示关键点及其连接之间的映射。
     /// </summary>
     public record KeyPointMarker
     {
         /// <summary>
-        /// Color associated with the keypoint.
+        /// 与关键点关联的颜色。
         /// </summary>
         public string Color { get; init; } = default!;
 
         /// <summary>
-        /// Defines connections between keypoints.
+        /// 定义关键点之间的连接。
         /// </summary>
         public KeyPointConnection[] Connections { get; init; } = [];
     }
 
     /// <summary>
-    /// Represents a connection between pose-markers and their parent marker, defined by index and color.
+    /// 表示姿态标记与其父标记之间的连接，由索引和颜色定义。
     /// </summary>
-    /// <param name="Index"></param>
-    /// <param name="Color"></param>
+    /// <param name="Index">索引</param>
+    /// <param name="Color">颜色</param>
     public record KeyPointConnection(int Index, string Color);
 }

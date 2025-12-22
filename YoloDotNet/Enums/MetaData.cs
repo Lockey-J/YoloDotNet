@@ -5,7 +5,7 @@
 namespace YoloDotNet.Enums
 {
     /// <summary>
-    /// Strongly typed names for ONNX metadata properties.
+    /// ONNX 元数据属性的强类型名称。
     /// </summary>
     public enum MetaData
     {

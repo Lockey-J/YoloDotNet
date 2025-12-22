@@ -7,22 +7,22 @@ namespace YoloDotNet.Models
     public class PoseEstimation : TrackingInfo, IDetection
     {
         /// <summary>
-        /// Label information associated with the detected object.
+        /// 与检测到的对象关联的标签信息。
         /// </summary>
         public LabelModel Label { get; init; } = new();
 
         /// <summary>
-        /// Confidence score of the detected object.
+        /// 检测到的对象的置信度分数。
         /// </summary>
         public double Confidence { get; init; }
 
         /// <summary>
-        /// Rectangle defining the region of interest (bounding box) of the detected object.
+        /// 定义检测到的对象的感兴趣区域（边界框）的矩形。
         /// </summary>
         public SKRectI BoundingBox { get; init; }
 
         /// <summary>
-        /// Keypoints with x, y coordinates and confidence score
+        /// 带有 x、y 坐标和置信度分数的关键点
         /// </summary>
         public KeyPoint[] KeyPoints { get; set; } = [];
     }

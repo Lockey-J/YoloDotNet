@@ -13,7 +13,7 @@ namespace YoloDotNet.Video
             Value = value;
         }
 
-        // Presets
+        // 预设
         public static readonly FrameRate AUTO = new(0);
         public static readonly FrameRate FPS15 = new (15f);
         public static readonly FrameRate FPS23_976 = new (23.976f);
@@ -25,7 +25,7 @@ namespace YoloDotNet.Video
         public static readonly FrameRate FPS59_94 = new (59.94f);
         public static readonly FrameRate FPS60 = new (60f);
 
-        // Implicit conversion for flexibility
+        // 为灵活性而进行的隐式转换
         public static implicit operator float(FrameRate rate) => rate.Value;
     }
 }

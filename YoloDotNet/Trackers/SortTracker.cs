@@ -21,50 +21,50 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Updates the tracker state with the current detections.
+        /// 使用当前检测结果更新跟踪器状态。
         /// </summary>
-        /// <typeparam name="T">A detection type implementing <see cref="IDetection"/>.</typeparam>
-        /// <param name="detections">List of detections from the current frame.</param>
+        /// <typeparam name="T">实现 <see cref="IDetection"/> 的检测类型。</typeparam>
+        /// <param name="detections">来自当前帧的检测结果列表。</param>
         /// <remarks>
-        /// The method performs the following steps:
+        /// 该方法执行以下步骤：
         /// <list type="bullet">
-        /// <item>Predicts new positions of existing tracked objects using a Kalman filter.</item>
-        /// <item>Matches current detections to active tracks using a cost matrix and assignment algorithm.</item>
-        /// <item>Adds new detections as untracked objects when no matching track is found.</item>
-        /// <item>Initializes tracking if no active tracks exist.</item>
-        /// <item>Removes old tracked objects that have exceeded the maximum allowed age.</item>
+        /// <item>使用卡尔曼滤波器预测现有跟踪对象的新位置。</item>
+        /// <item>使用成本矩阵和分配算法将当前检测结果匹配到活动轨迹。</item>
+        /// <item>当没有找到匹配轨迹时，将新的检测结果添加为未跟踪对象。</item>
+        /// <item>如果没有活动轨迹存在，则初始化跟踪。</item>
+        /// <item>移除超过最大允许年龄的旧跟踪对象。</item>
         /// </list>
         /// </remarks>
         public void UpdateTracker<T>(List<T> detections) where T : IDetection
         {
-            // If there is nothing to track, no further processing needed...
+            // 如果没有要跟踪的内容，则无需进一步处理...
             if (detections.Count == 0)
             {
                 RemoveOldTrackedObjects();
                 return;
             }
 
-            // Predict new positions using Kalman Filter
+            // 使用卡尔曼滤波器预测新位置
             foreach (var trackedObject in _trackedObjects.Values)
                 trackedObject.KalmanPredict();
 
-            // Get previous boundingboxes based on previous _trackCounter
+            // 根据之前的轨迹计数器获取之前的边界框
             var activeTracks = _trackedObjects.Where(x => x.Value.Age <= _maxAge).ToList();
 
-            // Update existing tracked objects and add new untracked objects.
+            // 更新现有的跟踪对象并添加新的未跟踪对象。
             if (activeTracks.Count > 0)
             {
                 var costMatrix = CalculateCostMatrix(activeTracks, detections);
 
-                // Match detected objects with tracked objects
+                // 将检测到的对象与跟踪对象匹配
                 var assignedIds = MatchPredictedObjects(detections, activeTracks, costMatrix);
 
-                // Add untracked new objects to tracker
+                // 将未跟踪的新对象添加到跟踪器
                 AddUntrackedObjects(detections, assignedIds);
             }
             else
             {
-                // Tracker is empty; create new tracks for all current detections.
+                // 跟踪器为空；为所有当前检测结果创建新轨迹。
                 CreateInitialTracks(detections);
             }
             
@@ -72,12 +72,12 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Adds new tracks for detections that were not matched to any existing tracked object.
-        /// Called after the assignment phase.
+        /// 为未匹配到任何现有跟踪对象的检测结果添加新轨迹。
+        /// 在分配阶段之后调用。
         /// </summary>
         private void AddUntrackedObjects<T>(List<T> detections, HashSet<int> assignedDetections) where T : IDetection
         {
-            // Add new untracked objects     
+            // 添加新的未跟踪对象     
             for (int i = 0; i < detections.Count; i++)
             {
                 if (assignedDetections.Contains(i) is false)
@@ -91,8 +91,8 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Adds new untracked objects to the tracker.  
-        /// Used when the tracker is empty and all detections are considered new.
+        /// 将新的未跟踪对象添加到跟踪器。
+        /// 当跟踪器为空且所有检测结果都被视为新对象时使用。
         /// </summary>
         public void CreateInitialTracks<T>(List<T> detections) where T : IDetection
         {
@@ -106,7 +106,7 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Removes tracked objects that have not been matched for more than <c>_maxAge</c> frames.
+        /// 移除超过 <c>_maxAge</c> 帧未匹配的跟踪对象。
         /// </summary>
         private void RemoveOldTrackedObjects()
         {
@@ -122,8 +122,8 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Computes the cost matrix between active tracks and current detections,
-        /// based on IoU and normalized center-point distance.
+        /// 基于 IoU 和归一化中心点距离，
+        /// 计算活动轨迹与当前检测结果之间的成本矩阵。
         /// </summary>
         private static float[,] CalculateCostMatrix<T>(List<KeyValuePair<int, TrackedObject>> activeTracks, List<T> detections) where T : IDetection
         {
@@ -154,9 +154,9 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Matches current detections to existing active tracks using the LAPJV assignment algorithm
-        /// based on the provided cost matrix. Updates tracked objects for matched detections,
-        /// resets their age, and returns the set of assigned detection indices.
+        /// 使用 LAPJV 分配算法根据提供的成本矩阵将当前检测结果匹配到现有的活动轨迹。
+        /// 更新匹配检测的跟踪对象，重置其年龄，
+        /// 并返回分配的检测索引集合。
         /// </summary>
         private HashSet<int> MatchPredictedObjects<T>(List<T> detections, List<KeyValuePair<int, TrackedObject>> activeTracks, float[,] costMatrix) where T : IDetection
         {
@@ -198,7 +198,7 @@ namespace YoloDotNet.Trackers
             return assignedDetections;
         }
         /// <summary>
-        /// Calculate distance between two bounding box centers.
+        /// 计算两个边界框中心之间的距离。
         /// </summary>
         private static float CalculateDistance(float predictedX, float predictedY, float detectionX, float detectionY)
         {

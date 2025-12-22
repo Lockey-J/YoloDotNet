@@ -3,12 +3,12 @@
 namespace PoseEstimationDemo
 {
     /// <summary>
-    /// Demonstrates configuring a custom keypoint marker profile with custom colors and illustrating keypoint connections.
+    /// 演示配置自定义关键点标记配置文件，包含自定义颜色和关键点连接说明。
     /// </summary>
     public static class CustomKeyPointColorMap
     {
         /// <summary>
-        /// Keypoints must be in the SAME EXACT order(!) as the classes in your trained model.
+        /// 关键点必须与训练模型中的类别具有完全相同的顺序（！）。
         /// </summary>
         private enum KeyPointType
         {
@@ -32,7 +32,7 @@ namespace PoseEstimationDemo
         }
 
         /// <summary>
-        /// Color names for identifying hexadecimal colors
+        /// 用于标识十六进制颜色的颜色名称
         /// </summary>
         private enum KeyPointColor
         {
@@ -43,18 +43,18 @@ namespace PoseEstimationDemo
         }
 
         /// <summary>
-        /// Named hexadecimal colors
+        /// 命名的十六进制颜色
         /// </summary>
         private static Dictionary<KeyPointColor, string> Colors => new()
         {
-            { KeyPointColor.Green, "#A2FF33" },     // Light green
-            { KeyPointColor.LightBlue, "#33ACFF" }, // Light blue
-            { KeyPointColor.Yellow, "#FFF633" },    // Yellow
-            { KeyPointColor.HotPink, "#FF33AC" }    // Hot pink
+            { KeyPointColor.Green, "#A2FF33" },     // 浅绿色
+            { KeyPointColor.LightBlue, "#33ACFF" }, // 浅蓝色
+            { KeyPointColor.Yellow, "#FFF633" },    // 黄色
+            { KeyPointColor.HotPink, "#FF33AC" }    // 亮粉色
         };
 
         ///// <summary>
-        ///// Keypoint options.
+        ///// 关键点选项。
         ///// </summary>
         //public static PoseDrawingOptions KeyPointOptions => new()
         //{
@@ -62,13 +62,13 @@ namespace PoseEstimationDemo
         //    KeyPointMarkers = KeyPointMapping
         //};
 
-        #region Method for configuring custom keypoints and their connections
+        #region 配置自定义关键点及其连接的方法
         /// <summary>
-        /// Configure keypoint-connections and what colors to use.
+        /// 配置关键点连接和要使用的颜色。
         /// </summary>
         public static KeyPointMarker[] KeyPoints =>
         [
-            new () // Nose
+            new () // 鼻子
             {
                 Color = Colors[KeyPointColor.Green],
                 Connections =
@@ -77,16 +77,16 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.RightEye, Colors[KeyPointColor.Green])
                 ]
             },
-            new () // Left eye
+            new () // 左眼
             {
                 Color = Colors[KeyPointColor.Green],
                 Connections = [ new ((int)KeyPointType.RightEye, Colors[KeyPointColor.Green]) ]
             },
-            new () // Right eye
+            new () // 右眼
             {
                 Color = Colors[KeyPointColor.Green],
             },
-            new () // Left ear
+            new () // 左耳
             {
                 Color = Colors[KeyPointColor.Green],
                 Connections =
@@ -95,7 +95,7 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.LeftShoulder, Colors[KeyPointColor.Green]),
                 ]
             },
-            new () // Right ear
+            new () // 右耳
             {
                 Color = Colors[KeyPointColor.Green],
                 Connections =
@@ -104,7 +104,7 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.RightShoulder, Colors[KeyPointColor.Green]),
                 ]
             },
-            new () // Left shoulder
+            new () // 左肩
             {
                 Color = Colors[KeyPointColor.LightBlue],
                 Connections =
@@ -114,7 +114,7 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.LeftHip, Colors[KeyPointColor.HotPink])
                 ]
             },
-            new () // Right shoulder
+            new () // 右肩
             {
                 Color = Colors[KeyPointColor.LightBlue],
                 Connections =
@@ -123,25 +123,25 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.RightHip, Colors[KeyPointColor.HotPink])
                 ]
             },
-            new () // Left elbow
+            new () // 左肘
             {
                 Color = Colors[KeyPointColor.LightBlue],
                 Connections = [ new ((int)KeyPointType.LeftWrist, Colors[KeyPointColor.LightBlue]) ]
             },
-            new () // Right elbow
+            new () // 右肘
             {
                 Color = Colors[KeyPointColor.LightBlue],
                 Connections = [ new ((int)KeyPointType.RightWrist, Colors[KeyPointColor.LightBlue]) ]
             },
-            new () // Left wrist
+            new () // 左手腕
             {
                 Color = Colors[KeyPointColor.LightBlue]
             },
-            new () // Right wrist
+            new () // 右手腕
             {
                 Color = Colors[KeyPointColor.LightBlue]
             },
-            new () // Left hip
+            new () // 左髋
             {
                 Color = Colors[KeyPointColor.Yellow],
                 Connections =
@@ -150,26 +150,26 @@ namespace PoseEstimationDemo
                     new ((int)KeyPointType.LeftKnee, Colors[KeyPointColor.Yellow])
                 ]
             },
-            new () // Right hip
+            new () // 右髋
             {
                 Color = Colors[KeyPointColor.Yellow],
                 Connections = [ new ((int)KeyPointType.RightKnee, Colors[KeyPointColor.Yellow]) ]
             },
-            new () // Left knee
+            new () // 左膝
             {
                 Color = Colors[KeyPointColor.Yellow],
                 Connections = [ new ((int)KeyPointType.LeftAnkle, Colors[KeyPointColor.Yellow]) ]
             },
-            new () // Right knee
+            new () // 右膝
             {
                 Color = Colors[KeyPointColor.Yellow],
                 Connections = [ new ((int)KeyPointType.RightAnkle, Colors[KeyPointColor.Yellow]) ]
             },
-            new () // Left ankle
+            new () // 左踝
             {
                 Color = Colors[KeyPointColor.Yellow]
             },
-            new () // Right ankle
+            new () // 右踝
             {
                 Color = Colors[KeyPointColor.Yellow]
             }

@@ -5,10 +5,10 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Configuration options for drawing inference results.
+    /// 用于绘制推理结果的配置选项。
     /// </summary>
     public class DetectionDrawingOptions : CommonBoundingBoxOptions
     {
-        // Only inherits CommonBoundingBoxOptions; no extra needed.
+        // 仅继承 CommonBoundingBoxOptions；无需额外内容。
     }
 }

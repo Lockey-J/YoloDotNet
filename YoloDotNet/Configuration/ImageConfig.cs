@@ -22,7 +22,7 @@ namespace YoloDotNet.Configuration
 
         public const float POSE_KEYPOINT_THRESHOLD = 0.65f;
 
-        // Image size used for GPU memory allocation.
+        // 用于 GPU 内存分配的图像大小。
         public const int GPU_IMG_ALLOC_SIZE = 1080;
 
         public const int SCALING_DENOMINATOR = 1280;
@@ -33,10 +33,10 @@ namespace YoloDotNet.Configuration
             = new(0, 0, 0, CLASSIFICATION_BOX_ALPHA);
 
         public static readonly float TailThickness = 4f;
-        public static readonly SKColor TailPaintColorStart = new(255, 105, 180);  // #FF69B4 - Blazing Bubblegum Bomber Pink
+        public static readonly SKColor TailPaintColorStart = new(255, 105, 180);  // #FF69B4 - 炫热泡泡糖轰炸粉红
         public static readonly SKColor TailPaintColorEnd = TailPaintColorStart.WithAlpha(0);
 
-        public static readonly SKColor PoseMarkerColor = new (255, 246, 51, DEFAULT_OPACITY); // #FFF633 - Goblin Torchlight Yellow
+        public static readonly SKColor PoseMarkerColor = new (255, 246, 51, DEFAULT_OPACITY); // #FFF633 - 哥布林火炬光黄
 
         public static readonly SKSamplingOptions DefaultSamplingOptions = new (SKFilterMode.Nearest, SKMipmapMode.None);
         public static readonly SKSamplingOptions SegmentationResamplingOptions = new (SKFilterMode.Linear, SKMipmapMode.None);

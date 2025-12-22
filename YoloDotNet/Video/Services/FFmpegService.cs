@@ -7,9 +7,8 @@ namespace YoloDotNet.Video.Services
     internal class FFmpegService : IDisposable
     {
         /// <summary>
-        /// Mandatory callback that is invoked synchronously
-        /// for every decoded frame. The loop blocks until the
-        /// callback returns.
+        /// 为每个解码帧同步调用的强制回调。
+        /// 循环会阻塞直到回调返回。
         /// </summary>
         public Action<SKBitmap, long>? OnFrameReady { get; set; }
         public Action? OnVideoEnd { get; set; }
@@ -51,7 +50,7 @@ namespace YoloDotNet.Video.Services
                 _videoTargetfps = fps;
                 (_videoTargetWidth, _videoTargetHeight) = CalculateProportionalResize(new Metadata { Width = width, Height = height }, _videoOptions);
 
-                // Give user metadata info about selected video
+                // 为用户提供有关所选视频的元数据信息
                 VideoMetadata = new VideoMetadata(
                     width,
                     height,
@@ -75,7 +74,7 @@ namespace YoloDotNet.Video.Services
             _videoTargetHeight = newHeight;
             _videoTargetfps = _videoOptions.FrameRate.Value != 0 ? _videoOptions.FrameRate.Value : metadata.FPS;
 
-            // Give user metadata info about selected video
+            // 为用户提供有关所选视频的元数据信息
             VideoMetadata = new VideoMetadata(
                 metadata.Width,
                 metadata.Height,
@@ -118,7 +117,7 @@ namespace YoloDotNet.Video.Services
         }
 
         /// <summary>
-        /// Pre-process video file by creating a temporary file with video stream only, in order to get actual duration of video and other video info
+        /// 通过创建仅包含视频流的临时文件来预处理视频文件，以获取视频的实际持续时间和其他视频信息
         /// </summary>
         public static Metadata GetVideoInfo(string videoPath)
         {
@@ -131,7 +130,7 @@ namespace YoloDotNet.Video.Services
 
             ffprobe.Start();
 
-            // Read standard output and error synchronously
+            // 同步读取标准输出和错误
             string output = ffprobe.StandardOutput.ReadToEnd();
             string error = ffprobe.StandardError.ReadToEnd();
 
@@ -143,7 +142,7 @@ namespace YoloDotNet.Video.Services
             {
                 var test = streams.ToString();
 
-                // Prepare json string
+                // 准备 json 字符串
                 var json = Regex.Replace(streams.ToString(),
                     @"""r_frame_rate"":\s""(\d+)\/(\d+)""",
                     @"""frameratenumerator"": $1,""frameratedenominator"": $2");
@@ -165,10 +164,10 @@ namespace YoloDotNet.Video.Services
 
             string inputSource = _videoOptions.VideoInput;
 
-            // Is input a local file?
+            // 输入是本地文件吗？
             if (inputSource.IsLocalFile())
             {
-                // Apply start time and duration options
+                // 应用开始时间和持续时间选项
                 if (_videoOptions.StartTimeSeconds > 0)
                 {
                     ffmpegArgs.AddRange([
@@ -177,7 +176,7 @@ namespace YoloDotNet.Video.Services
                         ]);
                 }
 
-                // Limit duration of processed video?
+                // 限制处理视频的持续时间？
                 if (_videoOptions.DurationSeconds > 0)
                 {
                     ffmpegArgs.AddRange([
@@ -186,7 +185,7 @@ namespace YoloDotNet.Video.Services
                 }
             }
 
-            // Is input a video device, eg. webcam etc?
+            // 输入是视频设备吗，例如摄像头等？
             if (string.IsNullOrEmpty(VideoMetadata.DeviceName) is false)
             {
                 // Select the correct input format based on platform
@@ -201,7 +200,7 @@ namespace YoloDotNet.Video.Services
 
                     case Platform.Linux:
                         deviceVideoFilter = "v4l2";
-                        // On Linux, device name is usually like "video0" → becomes "/dev/video0"
+                        // 在 Linux 上，设备名称通常像 "video0" → 变成 "/dev/video0"
                         inputSource = VideoMetadata.DeviceName.StartsWith("/dev/")
                             ? VideoMetadata.DeviceName
                             : $"/dev/{VideoMetadata.DeviceName}";
@@ -223,7 +222,7 @@ namespace YoloDotNet.Video.Services
                     "-video_size",     $"{VideoMetadata.Width}x{VideoMetadata.Height}"]); // Force device to use full resolution
             }
 
-            // Process all frames or every nth frame?
+            // 处理所有帧还是每隔 n 帧处理一次？
             var videoFilter = _videoOptions.FrameInterval <= 0
                 ? $@"fps={_videoTargetfps.ToString(CultureInfo.InvariantCulture)}"
                 : $@"select='not(mod(n,{_videoOptions.FrameInterval}))',setpts=N/FRAME_RATE/TB";

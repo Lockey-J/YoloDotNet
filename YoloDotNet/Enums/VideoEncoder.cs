@@ -5,51 +5,51 @@
 namespace YoloDotNet.Enums
 {
     /// <summary>
-    /// Common video encoders.
-    /// Note: FFmpeg must be built with support for the selected encoder.
+    /// 通用视频编码器。
+    /// 注意：FFmpeg 必须构建为支持选定的编码器。
     /// </summary>
     public enum VideoEncoder
     {
         #region H.264 / AVC
 
         /// <summary>
-        /// Software H.264 encoder (CPU).
-        /// Universally supported, good quality, slower performance.
+        /// 软件 H.264 编码器（CPU）。
+        /// 通用支持，质量好，性能较慢。
         /// </summary>
         [EncoderName("libx264")]
         LibX264,
 
         /// <summary>
-        /// NVIDIA NVENC H.264 (GPU).
-        /// Fast hardware encoder. Requires NVIDIA GPU and FFmpeg built with NVENC.
+        /// NVIDIA NVENC H.264 (GPU)。
+        /// 快速硬件编码器。需要 NVIDIA GPU 和构建了 NVENC 的 FFmpeg。
         /// </summary>
         [EncoderName("h264_nvenc")]
         H264Nvenc,
 
         /// <summary>
-        /// Intel Quick Sync H.264 (GPU).
-        /// Requires Intel iGPU and FFmpeg built with QSV support.
+        /// Intel Quick Sync H.264 (GPU)。
+        /// 需要 Intel iGPU 和构建了 QSV 支持的 FFmpeg。
         /// </summary>
         [EncoderName("h264_qsv")]
         H264Qsv,
 
         /// <summary>
-        /// AMD AMF H.264 (GPU).
-        /// Requires AMD GPU and FFmpeg built with AMF.
+        /// AMD AMF H.264 (GPU)。
+        /// 需要 AMD GPU 和构建了 AMF 的 FFmpeg。
         /// </summary>
         [EncoderName("h264_amf")]
         H264Amf,
 
         /// <summary>
-        /// VAAPI H.264 (Linux only).
-        /// Generic hardware encoder for Intel/AMD GPUs.
+        /// VAAPI H.264（仅限 Linux）。
+        /// 适用于 Intel/AMD GPU 的通用硬件编码器。
         /// </summary>
         [EncoderName("h264_vaapi")]
         H264Vaapi,
 
         /// <summary>
         /// Apple VideoToolbox H.264 (macOS).
-        /// Hardware-accelerated encoding on Apple devices.
+        /// 在 Apple 设备上进行硬件加速编码。
         /// </summary>
         [EncoderName("h264_videotoolbox")]
         H264VideoToolbox,
@@ -59,43 +59,43 @@ namespace YoloDotNet.Enums
         #region H.265 / HEVC
 
         /// <summary>
-        /// Software H.265/HEVC encoder (CPU).
-        /// Very efficient compression, but slow compared to hardware.
+        /// 软件 H.265/HEVC 编码器（CPU）。
+        /// 压缩效率非常高，但相比硬件编码器速度较慢。
         /// </summary>
         [EncoderName("libx265")]
         LibX265,
 
         /// <summary>
         /// NVIDIA NVENC HEVC (GPU).
-        /// Requires NVIDIA GPU and FFmpeg with NVENC.
+        /// 需要 NVIDIA GPU 和构建了 NVENC 的 FFmpeg。
         /// </summary>
         [EncoderName("hevc_nvenc")]
         HevcNvenc,
 
         /// <summary>
         /// Intel Quick Sync HEVC (GPU).
-        /// Requires Intel iGPU and FFmpeg built with QSV support.
+        /// 需要 Intel iGPU 和构建了 QSV 支持的 FFmpeg。
         /// </summary>
         [EncoderName("hevc_qsv")]
         HevcQsv,
 
         /// <summary>
         /// AMD AMF HEVC (GPU).
-        /// Requires AMD GPU and FFmpeg built with AMF.
+        /// 需要 AMD GPU 和构建了 AMF 的 FFmpeg。
         /// </summary>
         [EncoderName("hevc_amf")]
         HevcAmf,
 
         /// <summary>
-        /// VAAPI HEVC (Linux only).
-        /// Generic hardware encoder for Intel/AMD GPUs.
+        /// VAAPI HEVC（仅限 Linux）。
+        /// 适用于 Intel/AMD GPU 的通用硬件编码器。
         /// </summary>
         [EncoderName("hevc_vaapi")]
         HevcVaapi,
 
         /// <summary>
         /// Apple VideoToolbox HEVC (macOS).
-        /// Hardware-accelerated HEVC encoding on Apple devices.
+        /// 在 Apple 设备上进行硬件加速 HEVC 编码。
         /// </summary>
         [EncoderName("hevc_videotoolbox")]
         HevcVideoToolbox,
@@ -105,36 +105,36 @@ namespace YoloDotNet.Enums
         #region AV1
 
         /// <summary>
-        /// Software AV1 encoder (CPU).
-        /// Very efficient compression but extremely slow.
+        /// 软件 AV1 编码器（CPU）。
+        /// 压缩效率非常高，但速度极慢。
         /// </summary>
         [EncoderName("libaom-av1")]
         LibAomAv1,
 
         /// <summary>
-        /// NVIDIA NVENC AV1 (GPU).
-        /// Requires NVIDIA Ampere/Ada GPU (RTX 30/40 series) and FFmpeg built with NVENC.
+        /// NVIDIA NVENC AV1 (GPU)。
+        /// 需要 NVIDIA Ampere/Ada GPU（RTX 30/40 系列）和构建了 NVENC 的 FFmpeg。
         /// </summary>
         [EncoderName("av1_nvenc")]
         Av1Nvenc,
 
         /// <summary>
-        /// Intel Quick Sync AV1 (GPU).
-        /// Requires Intel Arc GPU or recent iGPU, FFmpeg built with QSV.
+        /// Intel Quick Sync AV1 (GPU)。
+        /// 需要 Intel Arc GPU 或近期的 iGPU，以及构建了 QSV 的 FFmpeg。
         /// </summary>
         [EncoderName("av1_qsv")]
         Av1Qsv,
 
         /// <summary>
-        /// VAAPI AV1 (Linux only).
-        /// Generic hardware encoder for Intel/AMD GPUs.
+        /// VAAPI AV1（仅限 Linux）。
+        /// 适用于 Intel/AMD GPU 的通用硬件编码器。
         /// </summary>
         [EncoderName("av1_vaapi")]
         Av1Vaapi,
 
         /// <summary>
-        /// Apple VideoToolbox AV1 (macOS 14+).
-        /// Hardware-accelerated AV1 encoding on Apple Silicon.
+        /// Apple VideoToolbox AV1（macOS 14+）。
+        /// 在 Apple Silicon 上进行硬件加速的 AV1 编码。
         /// </summary>
         [EncoderName("av1_videotoolbox")]
         Av1VideoToolbox,
@@ -144,8 +144,8 @@ namespace YoloDotNet.Enums
         #region ProRes
 
         /// <summary>
-        /// Apple ProRes encoder via VideoToolbox (macOS).
-        /// High-quality, intraframe codec used for editing workflows.
+        /// 通过 VideoToolbox 的 Apple ProRes 编码器（macOS）。
+        /// 高质量的帧内编码器，用于编辑工作流程。
         /// </summary>
         [EncoderName("prores_videotoolbox")]
         ProResVideoToolbox

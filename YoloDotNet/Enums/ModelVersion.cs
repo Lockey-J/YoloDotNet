@@ -5,7 +5,7 @@
 namespace YoloDotNet.Enums
 {
     /// <summary>
-    /// Strongly typed Yolo model versions
+    /// 强类型的 Yolo 模型版本
     /// </summary>
     public enum ModelVersion
     {

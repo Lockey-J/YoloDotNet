@@ -5,10 +5,10 @@
 namespace YoloDotNet.Enums
 {
     /// <summary>
-    /// Represents the data types supported by a model.
+    /// 表示模型支持的数据类型。
     /// </summary>
-    /// <remarks>This enumeration defines the types of numerical data that can be used in a model.  Use these
-    /// values to specify the precision or format of the data.</remarks>
+    /// <remarks>此枚举定义了可在模型中使用的数值数据类型。使用这些
+    /// 值来指定数据的精度或格式。</remarks>
     public enum ModelDataType
     {
         Float,

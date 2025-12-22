@@ -22,7 +22,7 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
         #region Constructors
         /// <summary>
-        /// Constructs a CoreMLExecutionProvider for running ONNX models using Apple's CoreML on macOS/iOS devices.
+        /// 构造用于在 macOS/iOS 设备上使用 Apple 的 CoreML 运行 ONNX 模型的 CoreMLExecutionProvider。
         /// </summary>
         /// <param name="model"></param>
         public CoreMLExecutionProvider(string model, bool adaptive = true)
@@ -31,7 +31,7 @@ namespace YoloDotNet.ExecutionProvider.CoreML
         }
 
         /// <summary>
-        /// Constructs a CoreMLExecutionProvider for running ONNX models using Apple's CoreML on macOS/iOS devices.
+        /// 构造用于在 macOS/iOS 设备上使用 Apple 的 CoreML 运行 ONNX 模型的 CoreMLExecutionProvider。
         /// </summary>
         /// <param name="model"></param>
         public CoreMLExecutionProvider(byte[] model, bool adaptive = true)
@@ -52,11 +52,11 @@ namespace YoloDotNet.ExecutionProvider.CoreML
                 EnableCpuMemArena = true
             };
 
-            // Use CoreML Execution Provider with adaptive optimization if available.
+            // 如果可用，使用 CoreML 执行提供程序与自适应优化。
             if (adaptive is true)
                 options.AppendExecutionProvider_CoreML();
 
-            // Create session using bytes if available; else load from file with selected provider.
+            // 如果可用，使用字节数组创建会话；否则从文件加载并使用选定的提供程序。
             _session = (model is byte[] modelBytes)
                 ? new InferenceSession(modelBytes, options)
                 : new InferenceSession((string)model, options);
@@ -73,14 +73,14 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
         #region Run Inference
         /// <summary>
-        /// Run inference on the provided normalized pixel data.
+        /// 对提供的归一化像素数据运行推理。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="normalizedPixels"></param>
         /// <returns></returns>
         unsafe public InferenceResult Run<T>(T[] normalizedPixels) where T : unmanaged
         {
-            // Pin the ushort[] so we can get a raw pointer
+            // 固定 ushort[] 以便我们可以获取原始指针
             fixed (T* pData = normalizedPixels)
             {
 
@@ -88,13 +88,13 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
                 using var inputOrtValue = OrtValue.CreateTensorValueWithData(
                     OrtMemoryInfo.DefaultInstance,
-                    elementType,   // 👈 force ONNX to interpret buffer as Float16
+                    elementType,   // 👈 强制 ONNX 将缓冲区解释为 Float16
                     _inputShape,
                     (IntPtr)pData,
-                    _inputShapeSize * sizeof(T) // size in bytes (ushort is 2 bytes, float is 4 bytes)
+                    _inputShapeSize * sizeof(T) // 大小以字节为单位（ushort 为 2 字节，float 为 4 字节）
                 );
 
-                // Run inference
+                // 运行推理
                 using var result = _session.Run(
                     _runOptions,
                     [OnnxData.InputName],
@@ -103,14 +103,14 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
                 if (elementType == TensorElementType.Float)
                 {
-                    // Extract tensor data from the result
+                    // 从结果中提取张量数据
                     var tensorData0 = result[0].GetTensorDataAsSpan<float>();
                     var tensorData1 = ReadOnlySpan<float>.Empty;
 
                     if (result.Count == 2)
                         tensorData1 = result[1].GetTensorDataAsSpan<float>();
 
-                    // Return the inference result containing the output tensor data
+                    // 返回包含输出张量数据的推理结果
                     return new InferenceResult(tensorData0, tensorData1);
                 }
                 else
@@ -123,7 +123,7 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
                     ConvertFloat16ToFloat(tensorData0, tensorData1);
 
-                    // Return the inference result containing the output tensor data
+                    // 返回包含输出张量数据的推理结果
                     return new InferenceResult(_outputBuffer0, _outputBuffer1);
                 }
             }
@@ -154,33 +154,33 @@ namespace YoloDotNet.ExecutionProvider.CoreML
         }
 
         /// <summary>
-        /// Allocates output buffers for float16 models only.
+        /// 仅为 float16 模型分配输出缓冲区。
         /// </summary>
         private void AllocateOutputBuffers()
         {
-            // Pre-allocate output buffers if the model uses Float16 data type.
+            // 如果模型使用 Float16 数据类型，则预分配输出缓冲区。
             if (OnnxData.ModelDataType == ModelDataType.Float16)
                 return;
 
             int items;
             int elements;
 
-            // Calculate the total number of elements for each output tensor and allocate buffers.
+            // 计算每个输出张量的元素总数并分配缓冲区。
 
-            // Classification models only has one output tensor with shape [1, num_classes]
+            // 分类模型只有一个输出张量，形状为 [1, num_classes]
             if (OnnxData.OutputShapes[0].Length == 2)
             {
                 (items, elements) = (OnnxData.OutputShapes[0][0], OnnxData.OutputShapes[0][1]);
                 _outputBuffer0 = new float[elements * items];
             }
-            // All other models has an output tensor with shape [1, num_boxes, num_attributes]
+            // 所有其他模型的输出张量形状为 [1, num_boxes, num_attributes]
             else
             {
                 (items, elements) = (OnnxData.OutputShapes[0][1], OnnxData.OutputShapes[0][2]);
                 _outputBuffer0 = new float[elements * items];
             }
 
-            // If there is a second output tensor (segmentation), allocate a buffer for it as well.
+            // 如果有第二个输出张量（分割），也为它分配缓冲区。
             if (OnnxData.OutputShapes.Length == 2)
             {
                 (items, elements) = (OnnxData.OutputShapes[1][1], OnnxData.OutputShapes[1][2]);
@@ -190,7 +190,7 @@ namespace YoloDotNet.ExecutionProvider.CoreML
 
         private void ConvertFloat16ToFloat(ReadOnlySpan<Float16> tensorData0, ReadOnlySpan<Float16> tensorData1)
         {
-            // Convert Float16 to float and store in pre-allocated buffers
+            // 将 Float16 转换为 float 并存储在预分配的缓冲区中
             for (int i = 0; i < tensorData0.Length; i++)
                 _outputBuffer0[i] = (float)tensorData0[i];
 
@@ -199,26 +199,26 @@ namespace YoloDotNet.ExecutionProvider.CoreML
         }
 
         /// <summary>
-        /// Extracts metadata and input/output shapes from the ONNX model.
+        /// 从 ONNX 模型中提取元数据和输入/输出形状。
         /// </summary>
         private void GetOnnxMetaData()
         {
-            // Extract custom metadata from the ONNX model.
+            // 从 ONNX 模型中提取自定义元数据。
             var metaData = _session.ModelMetadata.CustomMetadataMap;
 
-            // Get input shape and size.
+            // 获取输入形状和大小。
             var inputShape = Array.ConvertAll(_session.InputMetadata[_session.InputNames[0]].Dimensions, Convert.ToInt64);
             var inputSize = (int)ShapeUtils.GetSizeForShape(inputShape);
 
             _elementDataType = GetModelElementType();
             _inputShapeSize = (int)ShapeUtils.GetSizeForShape(inputShape);
 
-            // Determine model data type (Float32 or Float16).
+            // 确定模型数据类型（Float32 或 Float16）。
             var modelDataType = _elementDataType == TensorElementType.Float16
                 ? ModelDataType.Float16
                 : ModelDataType.Float;
 
-            // Create OnnxDataRecord to hold model information.
+            // 创建 OnnxDataRecord 来保存模型信息。
             OnnxData = new OnnxDataRecord(
                 metaData,
                 modelDataType,
@@ -232,7 +232,7 @@ namespace YoloDotNet.ExecutionProvider.CoreML
         }
 
         /// <summary>
-        /// Gets the tensor element type used by the model (e.g., Float32 or Float16).
+        /// 获取模型使用的张量元素类型（例如，Float32 或 Float16）。
         /// </summary>
         internal TensorElementType GetModelElementType()
             => _session.InputMetadata["images"].ElementDataType;

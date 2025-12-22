@@ -16,32 +16,32 @@ using YoloDotNet.Test.Common.Enums;
 namespace SegmentationDemo
 {
     /// <summary>
-    /// Demonstrates semantic segmentation on static images using the YoloDotNet library.
+    /// 使用 YoloDotNet 库演示在静态图像上进行语义分割。
     /// 
-    /// This demo loads a sample image, performs segmentation inference to detect pixel-level object masks,
-    /// overlays the segmentation masks along with bounding boxes, labels, and confidence scores,
-    /// and saves the annotated image to disk.
+    /// 此演示加载样本图像，执行分割推理以检测像素级对象掩码，
+    /// 将分割掩码与边界框、标签和置信度分数叠加，
+    /// 并将带注释的图像保存到磁盘。
     /// 
-    /// Key features showcased include:
-    /// - Model initialization with flexible hardware options (CPU/GPU) and image preprocessing settings
-    /// - Static image segmentation inference with adjustable confidence and mask thresholds
-    /// - Comprehensive rendering options for segmentation masks, bounding boxes, labels, and confidence scores
-    /// - Saving output images in a standard format with customizable compression
-    /// - Console output of detected objects and their confidence levels
-    /// - Automatic creation of an output folder on the desktop to store results
+    /// 展示的关键功能包括：
+    /// - 具有灵活硬件选项（CPU/GPU）和图像预处理设置的模型初始化
+    /// - 具有可调整置信度和掩码阈值的静态图像分割推理
+    /// - 分割掩码、边界框、标签和置信度分数的综合渲染选项
+    /// - 以标准格式保存具有可自定义压缩的输出图像
+    /// - 检测对象及其置信度级别的控制台输出
+    /// - 在桌面上自动创建输出文件夹以存储结果
     /// 
-    /// Execution providers:
-    /// - CpuExecutionProvider: runs inference entirely on the CPU. Universally supported but slower.
-    /// - CudaExecutionProvider: executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-    ///   Optionally integrates with TensorRT for further optimization, supporting FP32, FP16, and INT8 precision modes.
+    /// 执行提供程序：
+    /// - CpuExecutionProvider：完全在 CPU 上运行推理。通用支持但速度较慢。
+    /// - CudaExecutionProvider：使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+    ///   可选地与 TensorRT 集成以进一步优化，支持 FP32、FP16 和 INT8 精度模式。
     /// 
-    /// Important notes:
-    /// - Choose the execution provider based on your available hardware and performance requirements.
-    /// - SegmentationDrawingOptions provides extensive customization for visual output,
-    ///   including font styling, colors, opacity, and mask rendering.
-    /// - Segmentation masks are drawn as pixel-level overlays, providing precise object outlines.
-    /// - Tail visualization for tracking is supported but not enabled in this static image demo (see VideoStream demo).
-    /// - For setup instructions and examples, see the README:  
+    /// 重要说明：
+    /// - 根据您可用的硬件和性能要求选择执行提供程序。
+    /// - SegmentationDrawingOptions 为视觉输出提供广泛的自定义选项，
+    ///   包括字体样式、颜色、不透明度和掩码渲染。
+    /// - 分割掩码作为像素级覆盖层绘制，提供精确的对象轮廓。
+    /// - 跟踪的轨迹可视化受支持，但在此静态图像演示中未启用（请参见 VideoStream 演示）。
+    /// - 有关设置说明和示例，请参见 README：  
     ///   https://github.com/NickSwardh/YoloDotNet
     /// </summary>
     internal class Program
@@ -54,12 +54,12 @@ namespace SegmentationDemo
             CreateOutputFolder();
             SetDrawingOptions();
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             using var yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
                 //     Runs inference entirely on the CPU. Universally supported on all hardware.
@@ -86,40 +86,40 @@ namespace SegmentationDemo
 
                 ExecutionProvider = new CudaExecutionProvider(
 
-                    // Path or byte[] of the ONNX model to load.
+                    // 要加载的 ONNX 模型的路径或字节数组。
                     model: SharedConfig.GetTestModelV11(ModelType.Segmentation),
 
-                    // GPU device Id to use for inference. -1 = CPU, 0+ = GPU device Id.
+                    // 用于推理的GPU设备ID。-1 = CPU，0+ = GPU设备ID。
                     gpuId: 0),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 在不保持宽高比的情况下调整图像大小以适应目标大小。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Stretched,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
-            // Print model type
+            // 打印模型类型
             Console.WriteLine($"Loaded ONNX Model: {yolo.ModelInfo}");
 
-            // Load input image as SKBitmap (or SKImage)
-            // The image is sourced from SharedConfig for test/demo purposes.
+            // 将输入图像加载为 SKBitmap（或 SKImage）
+            // 图像从 SharedConfig 获取，用于测试/演示目的。
             using var image = SKBitmap.Decode(SharedConfig.GetTestImage(ImageType.People));
 
-            // Run inference
+            // 运行推理
             var results = yolo.RunSegmentation(image, confidence: 0.24, pixelConfedence: 0.5, iou: 0.7);
 
-            // Draw results
+            // 绘制结果
             image.Draw(results, _drawingOptions);
 
-            // If using SKImage, the Draw method returns a new SKBitmap with the drawn results.
-            // Example:
+            // 如果使用 SKImage，Draw 方法返回一个带有绘制结果的新 SKBitmap。
+            // 示例：
             // using var resultImage = image.Draw(results, _drawingOptions);
 
-            // Save image
+            // 保存图像
             var fileName = Path.Combine(_outputFolder, $"Segmentation.jpg");
             image.Save(fileName, SKEncodedImageFormat.Jpeg, 80);
 
@@ -129,7 +129,7 @@ namespace SegmentationDemo
 
         private static void SetDrawingOptions()
         {
-            // Set options for drawing
+            // 设置绘制选项
             _drawingOptions = new SegmentationDrawingOptions
             {
                 DrawBoundingBoxes = true,
@@ -137,12 +137,12 @@ namespace SegmentationDemo
                 DrawLabels = true,
                 EnableFontShadow = true,
 
-                // SKTypeface defines the font used for text rendering.
-                // SKTypeface.Default uses the system default font.
-                // To load a custom font:
-                //   - Use SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) to load by font family name (if installed).
-                //   - Use SKTypeface.FromFile("path/to/font.ttf") to load a font directly from a file.
-                // Example:
+                // SKTypeface 定义用于文本渲染的字体。
+                // SKTypeface.Default 使用系统默认字体。
+                // 加载自定义字体：
+                //   - 使用 SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) 按字体系列名称加载（如果已安装）。
+                //   - 使用 SKTypeface.FromFile("path/to/font.ttf") 直接从文件加载字体。
+                // 示例：
                 //   Font = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal)
                 //   Font = SKTypeface.FromFile("C:\\Fonts\\CustomFont.ttf")
                 Font = SKTypeface.Default,
@@ -153,19 +153,19 @@ namespace SegmentationDemo
                 EnableDynamicScaling = true,
                 BorderThickness = 2,
 
-                // By default, YoloDotNet automatically assigns colors to bounding boxes.
-                // To override these default colors, you can define your own array of hexadecimal color codes.
-                // Each element in the array corresponds to the class index in your model.
-                // Example:
-                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // Color per class id
+                // 默认情况下，YoloDotNet 自动为边界框分配颜色。
+                // 要覆盖这些默认颜色，您可以定义自己的十六进制颜色代码数组。
+                // 数组中的每个元素对应模型中的类别索引。
+                // 示例：
+                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // 每个类别 ID 的颜色
 
                 BoundingBoxOpacity = 128,
                 DrawSegmentationPixelMask = true
 
-                // The following options configure tracked object tails, which visualize 
-                // the movement path of detected objects across a sequence of frames or images.
-                // Drawing the tail only works when tracking is enabled (e.g., using SortTracker).
-                // This is demonstrated in the VideoStream demo.
+                // 以下选项配置跟踪对象尾迹，用于可视化
+                // 检测对象在一系列帧或图像中的移动路径。
+                // 只有启用跟踪时才能绘制尾迹（例如，使用 SortTracker）。
+                // 此功能在 VideoStream 演示中进行了展示。
 
                 // DrawTrackedTail = false,
                 // TailPaintColorEnd = new(),

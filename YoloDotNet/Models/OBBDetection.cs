@@ -5,27 +5,27 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Represents the result of object detection, including label information, confidence score, and bounding box.
+    /// 表示对象检测结果，包括标签信息、置信度分数和边界框。
     /// </summary>
     public class OBBDetection : TrackingInfo, IDetection
     {
         /// <summary>
-        /// Label information associated with the detected object.
+        /// 与检测到的对象关联的标签信息。
         /// </summary>
         public LabelModel Label { get; init; } = new();
 
         /// <summary>
-        /// Confidence score of the detected object.
+        /// 检测到的对象的置信度分数。
         /// </summary>
         public double Confidence { get; init; }
 
         /// <summary>
-        /// Rectangle defining the region of interest (bounding box) of the detected object.
+        /// 定义检测到的对象的感兴趣区域（边界框）的矩形。
         /// </summary>
         public SKRectI BoundingBox { get; init; }
 
         /// <summary>
-        /// Orientation angle of bounding box
+        /// 边界框的方向角度
         /// </summary>
         public float OrientationAngle { get; set; }
 

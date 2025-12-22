@@ -7,22 +7,22 @@ namespace YoloDotNet.Extensions
     public static class CommonExtension
     {
         /// <summary>
-        /// Converts a value to a string representation as a percentage with two decimal points.
+        /// 将值转换为带两位小数的百分比的字符串表示。
         /// </summary>
-        /// <param name="value">The value to convert.</param>
-        /// <returns>A string representation of the percentage with two decimal points.</returns>
+        /// <param name="value">要转换的值。</param>
+        /// <returns>带两位小数的百分比字符串表示。</returns>
         public static string ToPercent(this double value)
             => (value * 100).ToString("0.##", CultureInfo.InvariantCulture);
 
         /// <summary>
-        /// Calculates a new dynamic size based on the image dimensions and a given scale value.
+        /// 根据图像维度和给定缩放值计算新的动态大小。
         /// </summary>
-        /// <param name="image">The image to calculate the dynamic size for.</param>
-        /// <param name="scale">The initial scale value to be adjusted dynamically.</param>
-        /// <returns>The new dynamically calculated size as a float value.</returns>
+        /// <param name="image">要计算动态大小的图像。</param>
+        /// <param name="scale">要动态调整的初始缩放值。</param>
+        /// <returns>作为浮点值的新的动态计算大小。</returns>
         public static float CalculateDynamicSize(this SKBitmap image, float scale)
         {
-            // Calculate the scale factor based on the image resolution and a denominator
+            // 根据图像分辨率和分母计算缩放因子
             float scaleFactor = image.Width / ImageConfig.SCALING_DENOMINATOR;
 
             var newSize = scale;
@@ -33,13 +33,13 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Filters a list of object detection results, keeping only the objects whose labels match the specified filter classes.
+        /// 过滤对象检测结果列表，仅保留标签与指定过滤器类匹配的对象。
         /// </summary>
-        /// <typeparam name="T">The type of the detection results. Must be one of the supported types.</typeparam>
-        /// <param name="result">The list of detection results to filter.</param>
-        /// <param name="filterClasses">A set of class labels to retain in the filtered results.</param>
-        /// <returns>A filtered list containing only detection results where the label matches any of the specified filter classes.</returns>
-        /// <exception cref="ArgumentException">Thrown if the type <typeparamref name="T"/> is not a supported detection type.</exception>
+        /// <typeparam name="T">检测结果的类型。必须是受支持的类型之一。</typeparam>
+        /// <param name="result">要过滤的检测结果列表。</param>
+        /// <param name="filterClasses">要在过滤结果中保留的类标签集合。</param>
+        /// <returns>仅包含标签与任何指定过滤器类匹配的检测结果的过滤列表。</returns>
+        /// <exception cref="ArgumentException">如果类型 <typeparamref name="T"/> 不是受支持的检测类型，则抛出。</exception>
         public static List<T> FilterLabels<T>(this IEnumerable<T> result, HashSet<string> filterClasses) where T : IDetection
         {
             ArgumentNullException.ThrowIfNull(result);

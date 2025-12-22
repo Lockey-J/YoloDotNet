@@ -5,74 +5,74 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Represents the configuration and metadata of an ONNX model for object detection.
+    /// 表示用于对象检测的 ONNX 模型的配置和元数据。
     /// </summary>
     public record OnnxModel
     {
         /// <summary>
-        /// Gets the type of the model, eg. Object Detection, Classification etc.
+        /// 获取模型的类型，例如对象检测、分类等。
         /// </summary>
         public ModelType ModelType { get; init; }
 
         /// <summary>
-        /// Gets or the version of the model being used.
+        /// 获取或设置所用模型的版本。
         /// </summary>
         public ModelVersion ModelVersion { get; set; }
 
         /// <summary>
-        /// Gets the data type of the model. Float32 or Float16.
+        /// 获取模型的数据类型。Float32 或 Float16。
         /// </summary>
         public ModelDataType ModelDataType { get; init; }
 
         /// <summary>
-        /// Name of the input tensor in the ONNX model.
+        /// ONNX 模型中输入张量的名称。
         /// </summary>
         public string InputName { get; init; } = default!;
 
         /// <summary>
-        /// Name of the output tensors in the ONNX model.
+        /// ONNX 模型中输出张量的名称。
         /// </summary>
         public List<string> OutputNames { get; init; } = default!;
 
         /// <summary>
-        /// Input tensor configuration of the ONNX model.
+        /// ONNX 模型的输入张量配置。
         /// </summary>
         public Input Input { get; init; } = default!;
 
         /// <summary>
-        /// Output tensor configuration of the ONNX model.
+        /// ONNX 模型的输出张量配置。
         /// </summary>
         public List<Output> Outputs { get; init; } = default!;
 
         /// <summary>
-        /// Array of label models for object detection.
+        /// 用于对象检测的标签模型数组。
         /// </summary>
         public LabelModel[] Labels { get; init; } = default!;
 
         /// <summary>
-        /// The ONNX-model input shape for creating a Tensor
+        /// 用于创建张量的 ONNX 模型输入形状
         /// </summary>
         public long[] InputShape { get; init; } = default!;
 
         /// <summary>
-        /// Gets the size of the input shape used for tensor allocation and array pooling.
+        /// 获取用于张量分配和数组池化的输入形状的大小。
         /// </summary>
         public int InputShapeSize { get; init; }
 
         /// <summary>
-        /// ONNX custom metadata 
+        /// ONNX 自定义元数据
         /// </summary>
         public Dictionary<string, string> CustomMetaData { get; set; } = [];
     }
 
     /// <summary>
-    /// Represents the configuration of input data for the ONNX model in BCHW oder
+    /// 表示 ONNX 模型在 BCHW 顺序中输入数据的配置
     /// [Batch, Channels, Height, Width]
     /// </summary>
-    /// <param name="BatchSize">The batch size of input data.</param>
-    /// <param name="Channels">The number of input channels.</param>
-    /// <param name="Height">The height of input data.</param>
-    /// <param name="Width">The width of input data.</param>
+    /// <param name="BatchSize">输入数据的批次大小。</param>
+    /// <param name="Channels">输入通道的数量。</param>
+    /// <param name="Height">输入数据的高度。</param>
+    /// <param name="Width">输入数据的宽度。</param>
     public record Input(int BatchSize, int Channels, int Height, int Width)
     {
         public static Input Shape(int[] dimensions)
@@ -80,13 +80,13 @@ namespace YoloDotNet.Models
     }
 
     /// <summary>
-    /// Represents the configuration of output data for the ONNX model.
+    /// 表示 ONNX 模型输出数据的配置。
     /// </summary>
-    /// <param name="BatchSize">The batch size of input data.</param>
-    /// <param name="Elements">The number of elements of input data.</param>
-    /// <param name="Channels">The number of channels of input data.</param>
-    /// <param name="Width">The width of input data.</param>
-    /// <param name="Height">The height of input data.</param>
+    /// <param name="BatchSize">输入数据的批次大小。</param>
+    /// <param name="Elements">输入数据的元素数量。</param>
+    /// <param name="Channels">输入数据的通道数量。</param>
+    /// <param name="Width">输入数据的宽度。</param>
+    /// <param name="Height">输入数据的高度。</param>
     public record Output(int BatchSize, int Elements, int Channels, int Width, int Height)
     {
         public static Output Classification(int[] dimensions)

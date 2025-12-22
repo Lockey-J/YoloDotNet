@@ -7,23 +7,23 @@ namespace YoloDotNet.Models
     public class Segmentation : TrackingInfo, IDetection
     {
         /// <summary>
-        /// Label information associated with the detected object.
+        /// 与检测到的对象关联的标签信息。
         /// </summary>
         public LabelModel Label { get; init; } = new();
 
         /// <summary>
-        /// Confidence score of the detected object.
+        /// 检测到的对象的置信度分数。
         /// </summary>
         public double Confidence { get; init; }
 
         /// <summary>
-        /// Rectangle defining the region of interest (bounding box) of the detected object.
+        /// 定义检测到的对象的感兴趣区域（边界框）的矩形。
         /// </summary>
         public SKRectI BoundingBox { get; init; }
 
         /// <summary>
-        /// Bit-packed mask where each bit represents a pixel with confidence above a threshold (1 = present, 0 = absent).
-        /// Can be unpacked to an <see cref="SKBitmap"/> using the <c>UnpackToBitmap</c> extension method.
+        /// 位压缩掩码，其中每个位表示置信度高于阈值的像素（1 = 存在，0 = 不存在）。
+        /// 可以使用 <c>UnpackToBitmap</c> 扩展方法解包为 <see cref="SKBitmap"/>。
         /// </summary>
         public byte[] BitPackedPixelMask { get; set; } = [];
     }

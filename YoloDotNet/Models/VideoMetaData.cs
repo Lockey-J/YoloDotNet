@@ -35,6 +35,6 @@ namespace YoloDotNet.Models
 
         public double FPS => (double)FrameRateNumerator / FrameRateDenominator;
 
-        public long TotalFrames => ((int)Math.Floor(FPS * Duration)) - 1; // Set -1 to keep total frames zero-index.
+        public long TotalFrames => ((int)Math.Floor(FPS * Duration)) - 1; // 设置 -1 以保持总帧数为零索引。
     }
 }

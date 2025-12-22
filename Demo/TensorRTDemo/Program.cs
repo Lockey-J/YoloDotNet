@@ -17,31 +17,31 @@ using YoloDotNet.Test.Common.Enums;
 namespace TensorRTDemo
 {
     /// <summary>
-    /// Demonstrates how to use YoloDotNet with GPU acceleration via CUDA and TensorRT.
+    /// 演示如何通过 CUDA 和 TensorRT 使用 YoloDotNet 进行 GPU 加速。
     /// 
-    /// This demo performs object detection on a static image using a YOLOv11 ONNX model,
-    /// accelerated by CUDA with TensorRT optimization (FP32, FP16, or INT8).
-    /// The image is annotated with bounding boxes, class labels, and confidence scores,
-    /// and the result is saved to disk.
+    /// 此演示使用 YOLOv11 ONNX 模型在静态图像上执行对象检测，
+    /// 通过带 TensorRT 优化的 CUDA（FP32、FP16 或 INT8）进行加速。
+    /// 图像使用边界框、类别标签和置信度分数进行注释，
+    /// 结果保存到磁盘。
     /// 
-    /// It showcases:
-    /// - CUDA-backed GPU inference with TensorRT precision (FP32, FP16, INT8)
-    /// - Model initialization with configurable hardware and preprocessing options
-    /// - Static image inference for detecting objects with bounding boxes
-    /// - Customizable rendering of detection results (labels, confidence, boxes)
-    /// - Saving annotated output to disk
-    /// - Console reporting of inference results
+    /// 它展示了：
+    /// - 带 TensorRT 精度（FP32、FP16、INT8）的 CUDA 支持 GPU 推理
+    /// - 可配置硬件和预处理选项的模型初始化
+    /// - 使用边界框检测对象的静态图像推理
+    /// - 检测结果的可自定义渲染（标签、置信度、框）
+    /// - 将带注释的输出保存到磁盘
+    /// - 推理结果的控制台报告
     /// 
-    /// Execution providers:
-    /// - CpuExecutionProvider: runs inference on CPU (slower but universally supported).
-    /// - CudaExecutionProvider: uses NVIDIA GPU via CUDA for faster inference.  
-    ///   Optionally integrates with TensorRT for highly optimized performance  
-    ///   with configurable precision (FP32, FP16, INT8).
+    /// 执行提供程序：
+    /// - CpuExecutionProvider：在 CPU 上运行推理（较慢但通用支持）。
+    /// - CudaExecutionProvider：通过 NVIDIA GPU 使用 CUDA 进行更快推理。  
+    ///   可选地与 TensorRT 集成以获得高度优化的性能  
+    ///   具有可配置精度（FP32、FP16、INT8）。
     /// 
-    /// Important notes:
-    /// - Choose the provider based on your hardware and performance requirements.
-    /// - For TensorRT acceleration, configure the `trtConfig` parameter of CudaExecutionProvider.
-    /// - Requires a compatible NVIDIA GPU with CUDA/cuDNN, and TensorRT runtime installed.
+    /// 重要说明：
+    /// - 根据硬件和性能要求选择提供程序。
+    /// - 对于 TensorRT 加速，请配置 CudaExecutionProvider 的 `trtConfig` 参数。
+    /// - 需要兼容的 NVIDIA GPU、CUDA/cuDNN 和已安装的 TensorRT 运行时。
     /// </summary>
     internal class Program
     {
@@ -61,12 +61,12 @@ namespace TensorRTDemo
                 "- For more details on TensorRT usage and configuration, see the README\n" +
                 "  included with this demo.\n");
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             using var yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 // - CpuExecutionProvider  
                 //   Runs inference entirely on the CPU. Universally supported but typically slower.
@@ -77,7 +77,7 @@ namespace TensorRTDemo
                 //   and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
                 //   See the TensorRT demo and documentation for detailed configuration and best practices.
                 // 
-                // Important:  
+                // 重要提示：  
                 // - Choose the provider that matches your available hardware and performance requirements.  
                 // - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
                 // - For detailed setup instructions and examples, see the README:  
@@ -85,13 +85,13 @@ namespace TensorRTDemo
 
                 ExecutionProvider = new CudaExecutionProvider(
 
-                    // Path or byte[] of the ONNX model to load.
+                    // 要加载的 ONNX 模型的路径或字节数组。
                     model: SharedConfig.GetTestModelV11(ModelType.ObjectDetection),
 
-                    // GPU device Id to use for inference. -1 = CPU, 0+ = GPU device Id.
+                    // 用于推理的GPU设备ID。-1 = CPU，0+ = GPU设备ID。
                     gpuId: 0,
 
-                    // Optional configuration for TensorRT execution.
+                    // TensorRT 执行的可选配置。
                     trtConfig: new TensorRt
                     {
                         Precision = TrtPrecision.FP16,
@@ -107,85 +107,85 @@ namespace TensorRTDemo
                         //   See Int8CalibrationCacheFile for calibration file requirements.
 
                         BuilderOptimizationLevel = 3,
-                        // Set the builder optimization level to use when building a new engine cache. A higher level
-                        // allows TensorRT to spend more building time on more optimization options.
+                        // 设置构建新引擎缓存时使用的构建器优化级别。更高级别
+                        // 允许 TensorRT 在更多优化选项上花费更多构建时间。
                         //
-                        // WARNING: levels below 3 do not guarantee good engine performance, but greatly improve
-                        // build time. Default 3, valid range[0 - 5].
+                        // 警告：低于 3 的级别不能保证良好的引擎性能，但会大大改善
+                        // 构建时间。默认为 3，有效范围为 [0 - 5]。
 
                         EngineCachePath = _trtEngineCacheFolder,
-                        // Specifies the directory where TensorRT will store and load engine cache files.
+                        // 指定 TensorRT 将存储和加载引擎缓存文件的目录。
                         //
-                        // The engine cache avoids rebuilding the TensorRT engine on every startup,
-                        // significantly improving initialization time.
+                        // 引擎缓存避免在每次启动时重新构建 TensorRT 引擎，
+                        // 显著改善初始化时间。
                         //
-                        // If cache files already exist for the current model, hardware, precision, and configuration,
-                        // they will be reused automatically. Otherwise, a new engine cache will be built and stored here.
+                        // 如果缓存文件已存在于当前模型、硬件、精度和配置，
+                        // 它们将被自动重用。否则，将在此处构建并存储新的引擎缓存。
                         //
-                        // Note: Existing cache files are never deleted automatically.
-                        // You must manually remove outdated or unused cache files from this directory as needed.
+                        // 注意：现有缓存文件永远不会被自动删除。
+                        // 您必须根据需要从此目录手动删除过时或未使用的缓存文件。
 
                         EngineCachePrefix = "YoloDotNet",
-                        // Sets a filename prefix for the generated TensorRT engine and profile cache files.
+                        // 为生成的 TensorRT 引擎和配置文件缓存设置文件名前缀。
                         //
-                        // This helps distinguish between cache files from different models, versions, or configurations,
-                        // especially when multiple engines are stored in the same EngineCachePath.
+                        // 这有助于区分来自不同模型、版本或配置的缓存文件，
+                        // 特别是当多个引擎存储在同一个 EngineCachePath 中时。
                         //
-                        // If left empty, a default internal prefix will be used.
+                        // 如果留空，将使用默认内部前缀。
 
                         Int8CalibrationCacheFile = Path.Join(SharedConfig.AbsoluteAssetsPath, "cache", "yolov11s.cache"),
-                        // Optional path to a TensorRT INT8 calibration cache file.
-                        // This is only used when INT8 precision mode is explicitly enabled; otherwise, it is ignored.
-                        // You may leave this empty if you're not using INT8 mode.
+                        // TensorRT INT8 校准缓存文件的可选路径。
+                        // 仅在明确启用 INT8 精度模式时使用；否则，它将被忽略。
+                        // 如果您不使用 INT8 模式，可以留空。
                         //
-                        // Specifies the path to the INT8 calibration cache file used during engine building.
-                        // This file is required when using non-quantized models in INT8 mode.
-                        // TensorRT uses it to assign dynamic ranges to tensors.
+                        // 指定引擎构建期间使用的 INT8 校准缓存文件的路径。
+                        // 在 INT8 模式下使用非量化模型时需要此文件。
+                        // TensorRT 使用它为张量分配动态范围。
                         //
-                        // The calibration cache must be pre-generated using the original model.pt data.
+                        // 校准缓存必须使用原始 model.pt 数据预先生成。
                         //
                         // 🔧 To generate the calibration cache, export the model using the Ultralytics CLI:
                         //
                         //   yolo export model=your_model.pt format=engine int8=true simplify=true data=your_model_dataset.yaml opset=17
                         //
-                        // This command generates:
-                        //   - A standard ONNX model (unquantized, FP32-based)
-                        //   - A TensorRT engine optimized for INT8 precision
-                        //   - A calibration cache file: <model_name>.cache
+                        // 此命令生成：
+                        //   - 标准 ONNX 模型（未量化，基于 FP32）
+                        //   - 为 INT8 精度优化的 TensorRT 引擎
+                        //   - 校准缓存文件：<model_name>.cache
                         //
-                        // The path to <model_name>.cache must be specified to run YOLO ONNX models in INT8 mixed precision mode.
-                        // Example:
+                        // 必须指定 <model_name>.cache 的路径才能在 INT8 混合精度模式下运行 YOLO ONNX 模型。
+                        // 示例：
                         //   Int8CalibrationCacheFile = @"path\to\<model_name>.cache"
                     }),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 在不保持宽高比的情况下调整图像大小以适应目标大小。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
-            // Print model type
+            // 打印模型类型
             Console.WriteLine($"Loaded ONNX Model: {yolo.ModelInfo}");
 
-            // Load input image as SKBitmap (or SKImage)
-            // The image is sourced from SharedConfig for test/demo purposes.
+            // 将输入图像加载为 SKBitmap（或 SKImage）
+            // 图像从 SharedConfig 获取，用于测试/演示目的。
             using var image = SKBitmap.Decode(SharedConfig.GetTestImage(ImageType.Street));
 
-            // Run object detection inference
+            // 运行对象检测推理
             var results = yolo.RunObjectDetection(image, confidence: 0.15, iou: 0.7);
 
-            // Draw results
+            // 绘制结果
             image.Draw(results, _drawingOptions);
 
-            // If using SKImage, the Draw method returns a new SKBitmap with the drawn results.
-            // Example:
+            // 如果使用 SKImage，Draw 方法返回一个带有绘制结果的新 SKBitmap。
+            // 示例：
             // using var resultImage = image.Draw(results, _drawingOptions);
 
-            // Save image
+            // 保存图像
             var fileName = Path.Combine(_outputFolder, "ObjectDetection.jpg");
             image.Save(fileName, SKEncodedImageFormat.Jpeg, 80);
 
@@ -195,7 +195,7 @@ namespace TensorRTDemo
 
         private static void SetDrawingOptions()
         {
-            // Set options for drawing
+            // 设置绘制选项
             _drawingOptions = new DetectionDrawingOptions
             {
                 DrawBoundingBoxes = true,
@@ -203,12 +203,12 @@ namespace TensorRTDemo
                 DrawLabels = true,
                 EnableFontShadow = true,
 
-                // SKTypeface defines the font used for text rendering.
-                // SKTypeface.Default uses the system default font.
-                // To load a custom font:
-                //   - Use SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) to load by font family name (if installed).
-                //   - Use SKTypeface.FromFile("path/to/font.ttf") to load a font directly from a file.
-                // Example:
+                // SKTypeface 定义用于文本渲染的字体。
+                // SKTypeface.Default 使用系统默认字体。
+                // 加载自定义字体：
+                //   - 使用 SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) 按字体系列名称加载（如果已安装）。
+                //   - 使用 SKTypeface.FromFile("path/to/font.ttf") 直接从文件加载字体。
+                // 示例：
                 //   Font = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal)
                 //   Font = SKTypeface.FromFile("C:\\Fonts\\CustomFont.ttf")
                 Font = SKTypeface.Default,
@@ -219,18 +219,18 @@ namespace TensorRTDemo
                 EnableDynamicScaling = true,
                 BorderThickness = 2,
 
-                // By default, YoloDotNet automatically assigns colors to bounding boxes.
-                // To override these default colors, you can define your own array of hexadecimal color codes.
-                // Each element in the array corresponds to the class index in your model.
-                // Example:
-                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // Color per class id
+                // 默认情况下，YoloDotNet 自动为边界框分配颜色。
+                // 要覆盖这些默认颜色，您可以定义自己的十六进制颜色代码数组。
+                // 数组中的每个元素对应模型中的类别索引。
+                // 示例：
+                //   BoundingBoxHexColors = ["#00ff00", "#547457", ...] // 每个类别 ID 的颜色
 
                 BoundingBoxOpacity = 128,
 
-                // The following options configure tracked object tails, which visualize 
-                // the movement path of detected objects across a sequence of frames or images.
-                // Drawing the tail only works when tracking is enabled (e.g., using SortTracker).
-                // This is demonstrated in the VideoStream demo.
+                // 以下选项配置跟踪对象尾迹，用于可视化
+                // 检测对象在一系列帧或图像中的移动路径。
+                // 只有启用跟踪时才能绘制尾迹（例如，使用 SortTracker）。
+                // 此功能在 VideoStream 演示中进行了展示。
 
                 // DrawTrackedTail = false,
                 // TailPaintColorEnd = new(),

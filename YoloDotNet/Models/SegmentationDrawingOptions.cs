@@ -5,12 +5,12 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Configuration options for drawing segmentation results.
+    /// 用于绘制分割结果的配置选项。
     /// </summary>
     public class SegmentationDrawingOptions : CommonBoundingBoxOptions
     {
         /// <summary>
-        /// Whether to draw pixelmask from segmentation result.
+        /// 是否从分割结果绘制像素掩码。
         /// </summary>
         public bool DrawSegmentationPixelMask { get; set; } = true;
 

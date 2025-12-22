@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
   
-        <!-- Webcam -->
+        <!-- 摄像头 -->
         <skia:SKElement x:Name="WebCamFrame"
                         Width="1280"
                         Height="720"
@@ -23,7 +23,7 @@
                         VerticalAlignment="Stretch"
                         PaintSurface="UpdateWebcamFrame" />
 
-        <!-- Simple processing timer -->
+        <!-- 简单的处理计时器 -->
         <TextBlock x:Name="FrameProcess"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Right"
@@ -32,13 +32,13 @@
                    Padding="4"
                    Margin="0,10,10,0"/>
 
-        <!-- Controls -->
+        <!-- 控件 -->
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Margin="20">
 
-            <!-- Slider -->
+            <!-- 滑块 -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <Slider x:Name="ConfidenceTreshold"
                         Minimum="0.20"

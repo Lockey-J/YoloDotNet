@@ -18,7 +18,7 @@ namespace YoloDotNet.Video.Services
         }
 
         /// <summary>
-        /// Add SKBitmap to queue
+        /// 将 SKBitmap 添加到队列
         /// </summary>
         /// <param name="image"></param>
         /// <param name="fileName"></param>
@@ -38,7 +38,7 @@ namespace YoloDotNet.Video.Services
         }
 
         /// <summary>
-        /// Add SKImage to queue
+        /// 将 SKImage 添加到队列
         /// </summary>
         /// <param name="image"></param>
         /// <param name="fileName"></param>
@@ -96,11 +96,11 @@ namespace YoloDotNet.Video.Services
             }
             catch (OperationCanceledException)
             {
-                // Exit gracefully.
+                // 优雅退出。
             }
             catch (Exception)
             {
-                // TODO: Handle any issues with saving the image, like IO errors, permissions, etc.
+                // TODO: 处理保存图像时的任何问题，如 IO 错误、权限等。
             }
         }
 

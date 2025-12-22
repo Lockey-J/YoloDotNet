@@ -5,24 +5,24 @@
 namespace YoloDotNet.Utils
 {
     /// <summary>
-    /// Resize a Gray8 image using bilinear interpolation with AVX2 acceleration.
-    /// Source and destination must be Gray8 format.
+    /// 使用双线性插值和 AVX2 加速调整 Gray8 图像的大小。
+    /// 源图像和目标图像必须是 Gray8 格式。
     /// 
-    /// The method relies heavily on SIMD (Single Instruction, Multiple Data)
-    /// for processing multiple pixels at once, using a single instruction.
+    /// 该方法严重依赖 SIMD（单指令，多数据）来使用单条指令
+    /// 一次处理多个像素。
     /// 
-    /// Uses AVX2 (Advanced Vector Extensions 2) that gives the CPU the ability
-    /// to do 256-bit wide SIMD math — super fast math on multiple values at once.
+    /// 使用 AVX2（高级向量扩展 2），使 CPU 能够进行 256 位宽的 SIMD 数学运算
+    /// —— 一次对多个值进行超快数学运算。
     /// </summary>
     public static unsafe class Avx2LinearResizer
     {
         public static void ScalePixels(SKBitmap src, SKBitmap dst)
         {
             if (src.ColorType != SKColorType.Gray8 || dst.ColorType != SKColorType.Gray8)
-                throw new YoloDotNetException("Both source and destination bitmaps must be Gray8 format.");
+                throw new YoloDotNetException("源图像和目标图像都必须是 Gray8 格式。");
 
             if (!Avx2.IsSupported)
-                throw new PlatformNotSupportedException("AVX2 is required.");
+                throw new PlatformNotSupportedException("需要 AVX2 支持。");
 
             int srcW = src.Width;
             int srcH = src.Height;
@@ -38,7 +38,7 @@ namespace YoloDotNet.Utils
             float scaleX = (float)srcW / dstW;
             float scaleY = (float)srcH / dstH;
 
-            // Precompute horizontal mapping
+            // 预计算水平映射
             int[] x0s = new int[dstW];
             int[] x1s = new int[dstW];
             float[] wxs = new float[dstW];
@@ -75,10 +75,10 @@ namespace YoloDotNet.Utils
                     int dx = 0;
                     while (dx + 32 <= dstW)
                     {
-                        // Check if x0 and x1 are contiguous for this 32-pixel block
+                        // 检查此 32 像素块的 x0 和 x1 是否连续
                         if (IsContiguous(px0s + dx, 32) && IsContiguous(px1s + dx, 32))
                         {
-                            // SIMD path
+                            // SIMD 路径
                             byte* topLeft = pSrc + srcRow0 + px0s[dx];
                             byte* topRight = pSrc + srcRow0 + px1s[dx];
                             byte* bottomLeft = pSrc + srcRow1 + px0s[dx];
@@ -138,7 +138,7 @@ namespace YoloDotNet.Utils
                         }
                         else
                         {
-                            // Non-contiguous: fallback to scalar
+                            // 非连续：回退到标量处理
                             for (int i = 0; i < 32; i++)
                             {
                                 int px = dx + i;
@@ -161,7 +161,7 @@ namespace YoloDotNet.Utils
                         }
                     }
 
-                    // Remaining pixels
+                    // 剩余像素
                     for (; dx < dstW; dx++)
                     {
                         int x0 = px0s[dx];
@@ -194,17 +194,17 @@ namespace YoloDotNet.Utils
 
         private static Vector256<float>[] BytesToFloats(Vector256<byte> vec)
         {
-            // Split 256-bit vector into 2 x 128-bit lanes
+            // 将 256 位向量分割为 2 个 128 位通道
             Vector128<byte> low = vec.GetLower();
             Vector128<byte> high = vec.GetUpper();
 
-            // Unpack bytes to ushort (zero-extend)
+            // 将字节解包为 ushort（零扩展）
             Vector128<ushort> lowLo = Sse2.UnpackLow(low, Vector128<byte>.Zero).AsUInt16();
             Vector128<ushort> lowHi = Sse2.UnpackHigh(low, Vector128<byte>.Zero).AsUInt16();
             Vector128<ushort> highLo = Sse2.UnpackLow(high, Vector128<byte>.Zero).AsUInt16();
             Vector128<ushort> highHi = Sse2.UnpackHigh(high, Vector128<byte>.Zero).AsUInt16();
 
-            // Unpack ushort to uint (zero-extend)
+            // 将 ushort 解包为 uint（零扩展）
             Vector128<uint> lowLoLo = Sse2.UnpackLow(lowLo, Vector128<ushort>.Zero).AsUInt32();
             Vector128<uint> lowLoHi = Sse2.UnpackHigh(lowLo, Vector128<ushort>.Zero).AsUInt32();
             Vector128<uint> lowHiLo = Sse2.UnpackLow(lowHi, Vector128<ushort>.Zero).AsUInt32();
@@ -214,13 +214,13 @@ namespace YoloDotNet.Utils
             Vector128<uint> highHiLo = Sse2.UnpackLow(highHi, Vector128<ushort>.Zero).AsUInt32();
             Vector128<uint> highHiHi = Sse2.UnpackHigh(highHi, Vector128<ushort>.Zero).AsUInt32();
 
-            // Combine pairs into 256-bit vectors
+            // 将对组合为 256 位向量
             Vector256<uint> vec0 = Vector256.Create(lowLoLo, lowLoHi);
             Vector256<uint> vec1 = Vector256.Create(lowHiLo, lowHiHi);
             Vector256<uint> vec2 = Vector256.Create(highLoLo, highLoHi);
             Vector256<uint> vec3 = Vector256.Create(highHiLo, highHiHi);
 
-            // Convert uint to float vectors
+            // 将 uint 转换为 float 向量
             Vector256<float> f0 = Avx.ConvertToVector256Single(vec0.AsInt32());
             Vector256<float> f1 = Avx.ConvertToVector256Single(vec1.AsInt32());
             Vector256<float> f2 = Avx.ConvertToVector256Single(vec2.AsInt32());

@@ -26,28 +26,28 @@ namespace YoloDotNet.Modules.V8
             return ClassifyTensor(inferenceResult.OrtSpan0, (int)classes);
         }
 
-        #region Classicifation
+        #region Classification
 
         /// <summary>
-        /// Classifies a tensor and returns a Classification list 
+        /// 对张量进行分类并返回 Classification 列表
         /// </summary>
-        /// <param name="numberOfClasses"></param>
+        /// <param name="numberOfClasses">类别数量</param>
         private List<Classification> ClassifyTensor(ReadOnlySpan<float> span, int numberOfClasses)
         {
             var poolBuffer = _classificationPool.Rent(span.Length);
 
             try
             {
-                // Fill poolbuffer with confidence and labelId
+                // 用置信度和标签ID填充池缓冲区
                 for (int i = 0; i < span.Length; i++)
                 {
                     poolBuffer[i] = new ClassificationEntry(span[i], i);
                 }
 
-                // Sort descending by confidence
+                // 按置信度降序排序
                 Array.Sort(poolBuffer, (a, b) => b.Confidence.CompareTo(a.Confidence));
 
-                // Take the top-N classes based on numberOfClasses
+                // 根据 numberOfClasses 取前 N 个类别
                 var results = new List<Classification>(numberOfClasses);
                 for (int i = 0; i < numberOfClasses; i++)
                 {
@@ -83,7 +83,7 @@ namespace YoloDotNet.Modules.V8
 
     internal readonly struct ClassificationEntry(float confidence, int labelId)
     {
-        public readonly float Confidence = confidence;  // confidence score
-        public readonly int LabelId = labelId;          // index into labels array
+        public readonly float Confidence = confidence;  // 置信度分数
+        public readonly int LabelId = labelId;          // 标签数组的索引
     }
 }

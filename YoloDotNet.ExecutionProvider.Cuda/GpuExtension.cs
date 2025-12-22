@@ -7,26 +7,26 @@ namespace YoloDotNet.ExecutionProvider.Cuda
     public static class GpuExtension
     {
         /// <summary>
-        /// Allocate GPU memory for input data and ensure memory synchronization.
+        /// 为输入数据分配 GPU 内存并确保内存同步。
         /// </summary>
         public static void AllocateGpuMemory(this InferenceSession session,
             OrtIoBinding ortIoBinding,
             RunOptions runOptions,
             TensorElementType tensorElementType)
         {
-            // Get input shape.
+            // 获取输入形状。
             var inputShape = Array.ConvertAll(session.InputMetadata[session.InputNames[0]].Dimensions, Convert.ToInt64);
 
-            // Determine byte size based on model data type.
+            // 根据模型数据类型确定字节大小。
             var byteSize = tensorElementType == TensorElementType.Float ? sizeof(float) : sizeof(ushort);
 
-            // Calculate input size.
+            // 计算输入大小。
             var inputSizeInBytes = ShapeUtils.GetSizeForShape(inputShape) * byteSize;
 
-            // Allocates unmanaged memory.
+            // 分配非托管内存。
             nint allocPtr = Marshal.AllocHGlobal((int)inputSizeInBytes);
 
-            // Create OrtValue with the allocated memory as the data buffer.
+            // 使用分配的内存作为数据缓冲区创建 OrtValue。
             using (var ortValueTensor = OrtValue.CreateTensorValueWithData(
                 OrtMemoryInfo.DefaultInstance,
                 tensorElementType,
@@ -37,16 +37,16 @@ namespace YoloDotNet.ExecutionProvider.Cuda
                 ortIoBinding.BindInput(session.InputNames[0], ortValueTensor);
             }
 
-            // Bind output
+            // 绑定输出
             ortIoBinding.BindOutputToDevice(session.OutputNames[0], OrtMemoryInfo.DefaultInstance);
 
-            // Ensure input data is properly synchronized with memory before running the inference.
+            // 在运行推理前确保输入数据与内存正确同步。
             ortIoBinding.SynchronizeBoundInputs();
 
-            // Run inference on the OrtIoBinding and bind allocated GPU-memory.
+            // 在 OrtIoBinding 上运行推理并绑定分配的 GPU 内存。
             session.RunWithBinding(runOptions, ortIoBinding);
 
-            // Ensure that the output data is properly synchronized with memory after running the inference.
+            // 在运行推理后确保输出数据与内存正确同步。
             ortIoBinding.SynchronizeBoundOutputs();
         }
     }

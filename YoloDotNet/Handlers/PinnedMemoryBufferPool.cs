@@ -5,19 +5,19 @@
 namespace YoloDotNet.Handlers
 {
     /// <summary>
-    /// A pool for managing reusable pinned memory buffers backed by SKBitmap instances.
-    /// Helps reduce GC pressure and allocation cost in high-frequency image processing scenarios.
+    /// 用于管理由 SKBitmap 实例支持的可重用固定内存缓冲区的池。
+    /// 有助于减少高频图像处理场景中的 GC 压力和分配成本。
     /// </summary>
     public class PinnedMemoryBufferPool : IDisposable
     {
-        // Internal thread-safe pool of reusable pinned memory buffers
+        // 可重用固定内存缓冲区的内部线程安全池
         internal readonly ConcurrentBag<PinnedMemoryBuffer> _pool = [];
 
-        // The image format/dimensions used to allocate each SKBitmap
+        // 用于分配每个 SKBitmap 的图像格式/维度
         private readonly SKImageInfo _imageInfo;
 
         /// <summary>
-        /// Initializes the buffer pool with a specified image layout and pre-allocates a number of buffers.
+        /// 使用指定的图像布局初始化缓冲池并预分配多个缓冲区。
         /// </summary>
         public PinnedMemoryBufferPool(SKImageInfo skInfo, int initialSize = 60)
         {
@@ -28,25 +28,25 @@ namespace YoloDotNet.Handlers
         }
 
         /// <summary>
-        /// Retrieves a buffer from the pool, or creates a new one if the pool is empty.
+        /// 从池中检索缓冲区，如果池为空则创建新的缓冲区。
         /// </summary>
         public PinnedMemoryBuffer Rent()
         {
             if (_pool.TryTake(out var buffer))
                 return buffer;
 
-            // Pool exhausted — create a new buffer as a fallback
+            // 池已耗尽 — 创建新缓冲区作为后备
             return new PinnedMemoryBuffer(_imageInfo); // fallback
         }
 
         /// <summary>
-        /// Returns a used buffer back to the pool after clearing its contents.
+        /// 在清除缓冲区内容后，将使用过的缓冲区返回到池中。
         /// </summary>
-        /// <param name="buffer">The buffer to be returned and reused.</param>
+        /// <param name="buffer">要返回和重用的缓冲区。</param>
         public void Return(PinnedMemoryBuffer buffer)
         {
-            // IMPORTANT: Clear the bitmap before reuse to prevent visual artifacts.
-            // This avoids leaking old frame data into subsequent frames.
+            // 重要：在重用前清除位图以防止视觉伪影。
+            // 这避免了将旧帧数据泄漏到后续帧中。
             // Using SKColors.Empty fills with transparent black (0,0,0,0).
             buffer.TargetBitmap.Erase(SKColors.Empty);
 
@@ -54,7 +54,7 @@ namespace YoloDotNet.Handlers
         }
 
         /// <summary>
-        /// Releases all resources used by the pool.
+        /// 释放池使用的所有资源。
         /// </summary>
         public void Dispose()
         {

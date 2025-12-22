@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023-2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
@@ -7,13 +7,13 @@ namespace YoloDotNet.Configuration
     public static class YoloDotNetColors
     {
         /// <summary>
-        /// Default color in hexadecimal format
+        /// 十六进制格式的默认颜色
         /// </summary>
         public static string Default()
             => "#FFFFFF";
 
         /// <summary>
-        /// 100 unique awesome colors in hexadecimal format ;)
+        /// 十六进制格式的 100 个独特的绝佳颜色 ;)
         /// </summary>
         public static string[] Get()
         {

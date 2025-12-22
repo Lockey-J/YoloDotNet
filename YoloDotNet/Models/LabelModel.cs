@@ -5,17 +5,17 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Represents a label with its associated color in hexadecimal format.
+    /// 表示一个标签及其关联的十六进制格式颜色。
     /// </summary>
     public record LabelModel
     {
         /// <summary>
-        /// Label index
+        /// 标签索引
         /// </summary>
         public int Index { get; init; }
 
         /// <summary>
-        /// Name of the label.
+        /// 标签的名称。
         /// </summary>
         public string Name { get; init; } = default!;
     }

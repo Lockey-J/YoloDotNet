@@ -23,7 +23,7 @@ namespace YoloDotNet.Modules.V8
 
             var detections = _objectDetectionModule.ObjectDetection(inferenceResult, confidence, iou);
 
-            // Convert to List<OBBDetection>
+            // 转换为 List<OBBDetection>
             var results = new List<OBBDetection>(detections.Length);
             for (int i = 0; i < detections.Length; i++)
                 results.Add((OBBDetection)detections[i]);

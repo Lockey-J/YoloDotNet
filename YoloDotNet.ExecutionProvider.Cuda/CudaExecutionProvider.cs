@@ -24,7 +24,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
         #region Constructors
         /// <summary>
-        /// Constructs a CudaExecutionProvider for running ONNX models using CUDA and optionally TensorRT.
+        /// 构造用于使用 CUDA 和可选的 TensorRT 运行 ONNX 模型的 CudaExecutionProvider。
         /// </summary>
         /// <param name="model"></param>
         /// <param name="gpuId"></param>
@@ -35,7 +35,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         }
 
         /// <summary>
-        /// Overload: Constructs a CudaExecutionProvider for running ONNX models using CUDA and optionally TensorRT.
+        /// 重载：构造用于使用 CUDA 和可选的 TensorRT 运行 ONNX 模型的 CudaExecutionProvider。
         /// </summary>
         /// <param name="model"></param>
         /// <param name="gpuId"></param>
@@ -48,7 +48,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
         #region Initialization
         /// <summary>
-        /// Initializes the ONNX Runtime session, configures the CUDA execution provider and allocates resources.
+        /// 初始化 ONNX Runtime 会话，配置 CUDA 执行提供程序并分配资源。
         /// </summary>
         /// <param name="model"></param>
         /// <param name="gpuId"></param>
@@ -59,7 +59,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
             var options = CreateSessionOptions(gpuId, trtConfig);
 
-            // Create session using bytes if available; else load from file with selected provider.
+            // 如果可用，使用字节数组创建会话；否则从文件加载并使用选定的提供程序。
             _session = (model is byte[] modelBytes)
                 ? new InferenceSession(modelBytes, options)
                 : new InferenceSession((string)model, options);
@@ -79,42 +79,42 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
         #region Run Inference
         /// <summary>
-        /// Runs inference on the provided normalized pixel data.
+        /// 对提供的归一化像素数据运行推理。
         /// </summary>
         /// <param name="normalizedPixels"></param>
         /// <returns></returns>
         unsafe public InferenceResult Run<T>(T[] normalizedPixels) where T : unmanaged
         {
-            // Pin the input pixel data in memory to prevent it from being moved by the garbage collector.
+            // 在内存中固定输入像素数据，防止垃圾回收器移动它。
             fixed (T* pData = normalizedPixels)
             {
-                // Create an OrtValue tensor from the pinned data
+                // 从固定数据创建 OrtValue 张量
                 using var inputOrtValue = OrtValue.CreateTensorValueWithData(
                     OrtMemoryInfo.DefaultInstance,
                     _elementDataType,
                     _inputShape,
                     (IntPtr)pData,
-                    _inputShapeSize * _dataTypeSize // size in bytes (ushort is 2 bytes, float is 4 bytes)
+                    _inputShapeSize * _dataTypeSize // 大小以字节为单位（ushort 为 2 字节，float 为 4 字节）
                 );
 
-                // Run inference
+                // 运行推理
                 using var result = _session.Run(
                     _runOptions,
                     [OnnxData.InputName],
                     [inputOrtValue],
                     OnnxData.OutputNames);
 
-                // Handle output based on the model's data type
+                // 根据模型的数据类型处理输出
                 if (_elementDataType == TensorElementType.Float)
                 {
-                    // Extract tensor data from the result
+                    // 从结果中提取张量数据
                     var tensorData0 = result[0].GetTensorDataAsSpan<float>();
                     var tensorData1 = ReadOnlySpan<float>.Empty;
 
                     if (result.Count == 2)
                         tensorData1 = result[1].GetTensorDataAsSpan<float>();
 
-                    // Return the inference result containing the output tensor data
+                    // 返回包含输出张量数据的推理结果
                     return new InferenceResult(tensorData0, tensorData1);
                 }
                 else
@@ -127,7 +127,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
                     ConvertFloat16ToFloat(tensorData0, tensorData1);
 
-                    // Return the inference result containing the output tensor data
+                    // 返回包含输出张量数据的推理结果
                     return new InferenceResult(_outputBuffer0, _outputBuffer1);
                 }
             }
@@ -136,35 +136,35 @@ namespace YoloDotNet.ExecutionProvider.Cuda
 
         #region CUDA and TensorRT helper methods
         /// <summary>
-        /// Allocates float output buffers for models using Float16 data type.
+        /// 为使用 Float16 数据类型的模型分配 float 输出缓冲区。
         /// </summary>
         private void AllocateOutputBuffers()
         {
-            // Pre-allocate output buffers if model uses Float16 to avoid repeated allocations during inference.
+            // 如果模型使用 Float16，则预分配输出缓冲区以避免推理过程中重复分配。
             if (OnnxData.ModelDataType == ModelDataType.Float)
                 return;
 
             int items;
             int elements;
 
-            // Calculate the total number of elements for each output tensor and allocate buffers.
+            // 计算每个输出张量的元素总数并分配缓冲区。
 
-            // Classification models only has one output tensor with shape [1, num_classes]
+            // 分类模型只有一个输出张量，形状为 [1, num_classes]
             if (OnnxData.OutputShapes[0].Length == 2)
             {
                 (items, elements) = (OnnxData.OutputShapes[0][0], OnnxData.OutputShapes[0][1]);
                 _outputBuffer0 = new float[elements * items];
             }
-            // All other models has an output tensor with shape [1, num_boxes, num_attributes]
+            // 所有其他模型的输出张量形状为 [1, num_boxes, num_attributes]
             else
             {
                 (items, elements) = (OnnxData.OutputShapes[0][1], OnnxData.OutputShapes[0][2]);
                 _outputBuffer0 = new float[elements * items];
             }
 
-            // If there is a second output tensor (segmentation), allocate a buffer for it as well.
+            // 如果有第二个输出张量（分割），也为它分配缓冲区。
 
-            // If there is a second output tensor, allocate a buffer for it as well.
+            // 如果有第二个输出张量，也为它分配缓冲区。
             if (OnnxData.OutputShapes.Length == 2)
             {
                 (items, elements) = (OnnxData.OutputShapes[1][1], OnnxData.OutputShapes[1][2]);
@@ -173,7 +173,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         }
 
         /// <summary>
-        /// Creates and configures session options for the ONNX Runtime session.
+        /// 为 ONNX Runtime 会话创建和配置会话选项。
         /// </summary>
         /// <param name="gpuId"></param>
         /// <param name="trtConfig"></param>
@@ -205,20 +205,20 @@ namespace YoloDotNet.ExecutionProvider.Cuda
                 throw new ArgumentOutOfRangeException(
                     paramName: nameof(gpuId),
                     actualValue: gpuId,
-                    message: "The specified gpuId is not valid. Use -1 for CPU execution, or 0 and above for a GPU device ID.");
+                    message: "指定的 gpuId 无效。使用 -1 进行 CPU 执行，或使用 0 及以上值作为 GPU 设备 ID。");
             }
 
             return options;
         }
 
         /// <summary>
-        /// Configure the global OrtEnv instance with custom logging options.
+        /// 使用自定义日志选项配置全局 OrtEnv 实例。
         /// </summary>
         private static void ConfigureOrtEnv()
         {
             try
             {
-                // Log errors and fatals
+                // 记录错误和致命错误
                 var envOptions = new EnvironmentCreationOptions
                 {
                     logLevel = OrtLoggingLevel.ORT_LOGGING_LEVEL_ERROR
@@ -228,12 +228,12 @@ namespace YoloDotNet.ExecutionProvider.Cuda
             }
             catch (OnnxRuntimeException ex) when (ex.Message.Contains("OrtEnv singleton instance already exists"))
             {
-                // OrtEnv has already been initialized — ignore and continue gracefully...
+                // OrtEnv 已经初始化 — 忽略并优雅地继续...
             }
         }
 
         /// <summary>
-        /// Configures the session options to use the CUDA execution provider with specified options.
+        /// 配置会话选项以使用带有指定选项的 CUDA 执行提供程序。
         /// </summary>
         /// <param name="gpuId"></param>
         /// <param name="options"></param>
@@ -244,24 +244,24 @@ namespace YoloDotNet.ExecutionProvider.Cuda
             cudaOptions.UpdateOptions(new Dictionary<string, string>
             {
                 { "device_id", gpuId.ToString() },
-                // Specifies which GPU device to use (default = 0 if not set).
+                // 指定要使用的 GPU 设备（如果未设置，默认为 0）。
 
                 { "arena_extend_strategy", "kNextPowerOfTwo" }, 
-                // Controls how the GPU memory arena grows when more memory is needed.
-                // kNextPowerOfTwo doubles the allocation size to the next power of two,
-                // which reduces the frequency of CUDA malloc/free calls and minimizes fragmentation 
-                // in long-running or high-throughput inference scenarios like YOLO object detection.
+                // 控制当需要更多内存时 GPU 内存 arena 的增长方式。
+                // kNextPowerOfTwo 将分配大小翻倍到下一个二次幂，
+                // 这会减少 CUDA malloc/free 调用的频率并最小化碎片 
+                // 在长时间运行或高吞吐量推理场景（如 YOLO 目标检测）中。
 
                 { "cudnn_conv_algo_search", "EXHAUSTIVE" },
-                // Forces cuDNN to benchmark all available convolution algorithms during model initialization
-                // and select the fastest one for the hardware + model combination.
-                // This gives optimal conv kernel performance at runtime, especially beneficial for large or custom conv layers.
+                // 强制 cuDNN 在模型初始化期间对所有可用的卷积算法进行基准测试
+                // 并为硬件 + 模型组合选择最快的一个。
+                // 这在运行时提供最佳的卷积核性能，特别对大型或自定义卷积层有益。
 
-                // Reduce host/device synchronization by enabling copy using the default stream when supported.
-                // This can avoid implicit stream synchronizations on some ONNX Runtime builds.
+                // 通过在支持时使用默认流启用复制来减少主机/设备同步。
+                // 这可以在某些 ONNX Runtime 构建中避免隐式流同步。
                 { "do_copy_in_default_stream", "1" },
 
-                // Allow cuDNN to use the maximum workspace (may increase memory usage but can improve kernel perf).
+                // 允许 cuDNN 使用最大工作空间（可能增加内存使用但可以提高内核性能）。
                 { "cudnn_conv_use_max_workspace", "1" }
 
             });
@@ -270,7 +270,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         }
 
         /// <summary>
-        /// Converts Float16 tensor data to Float32 and stores it in pre-allocated output buffers.
+        /// 将 Float16 张量数据转换为 Float32 并存储在预分配的输出缓冲区中。
         /// </summary>
         /// <param name="tensorData0"></param>
         /// <param name="tensorData1"></param>
@@ -293,26 +293,26 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         }
 
         /// <summary>
-        /// Extracts metadata and input/output shapes from the ONNX model.
+        /// 从 ONNX 模型中提取元数据和输入/输出形状。
         /// </summary>
         private void GetOnnxMetaData()
         {
-            // Extract custom metadata from the ONNX model.
+            // 从 ONNX 模型中提取自定义元数据。
             var metaData = _session.ModelMetadata.CustomMetadataMap;
 
-            // Get input shape and size.
+            // 获取输入形状和大小。
             var inputShape = Array.ConvertAll(_session.InputMetadata[_session.InputNames[0]].Dimensions, Convert.ToInt64);
 
             _inputShapeSize = (int)ShapeUtils.GetSizeForShape(inputShape);
             _elementDataType = GetModelElementType();
             _dataTypeSize = _elementDataType == TensorElementType.Float16 ? sizeof(ushort) : sizeof(float);
 
-            // Determine model data type (Float32 or Float16).
+            // 确定模型数据类型（Float32 或 Float16）。
             var modelDataType = _elementDataType == TensorElementType.Float16
                 ? ModelDataType.Float16
                 : ModelDataType.Float;
 
-            // Create OnnxDataRecord to hold model information.
+            // 创建 OnnxDataRecord 来保存模型信息。
             OnnxData = new OnnxDataRecord(
                 metaData,
                 modelDataType,
@@ -326,7 +326,7 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         }
 
         /// <summary>
-        /// Gets the tensor element type used by the model (e.g., Float32 or Float16).
+        /// 获取模型使用的张量元素类型（例如，Float32 或 Float16）。
         /// </summary>
         internal TensorElementType GetModelElementType()
             => _session.InputMetadata["images"].ElementDataType;

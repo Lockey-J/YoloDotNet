@@ -1,15 +1,15 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023-2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
 namespace YoloDotNet.Core
 {
     /// <summary>
-    /// Factory class to create YOLO detection modules based on model version and type.
+    /// 用于根据模型版本和类型创建 YOLO 检测模块的工厂类。
     /// </summary>
     internal class ModuleFactory
     {
-        // Dictionary mapping model versions and types to their respective module creation functions.
+        // 将模型版本和类型映射到各自模块创建函数的字典。
         private static readonly Dictionary<ModelVersion, Dictionary<ModelType, Func<YoloCore, IModule>>> _versionModuleMap =
         new()
         {
@@ -106,20 +106,20 @@ namespace YoloDotNet.Core
         };
 
         /// <summary>
-        /// Creates a detection module based on the specified YOLO options.
+        /// 根据指定的 YOLO 选项创建检测模块。
         /// </summary>
-        /// <param name="options">The options for creating the YOLO detection module.</param>
-        /// <returns>An instance of the appropriate detection module.</returns>
-        /// <exception cref="YoloDotNetModelException">Thrown if the model version or type is unsupported.</exception>
+        /// <param name="options">创建 YOLO 检测模块的选项。</param>
+        /// <returns>适当检测模块的实例。</returns>
+        /// <exception cref="YoloDotNetModelException">如果模型版本或类型不受支持，则抛出。</exception>
         public static IModule CreateModule(YoloOptions options)
         {
             var yoloCore = InitializeYoloCore(options);
 
-            // Get model version and type
+            // 获取模型版本和类型
             var modelVersion = yoloCore.OnnxModel.ModelVersion;
             var modelType = yoloCore.ModelType;
 
-            // Get dictionary from module map based on model version
+            // 根据模型版本从模块映射中获取字典
             var versionSelected = _versionModuleMap.TryGetValue(modelVersion, out var moduleMap);
             var moduleSelected = moduleMap!.TryGetValue(modelType, out var createModule);
 
@@ -130,10 +130,10 @@ namespace YoloDotNet.Core
         }
 
         /// <summary>
-        /// Initializes the YoloCore based on the specified options.
+        /// 根据指定选项初始化 YoloCore。
         /// </summary>
-        /// <param name="options">The options for initializing the Yolo model.</param>
-        /// <returns>An initialized YoloCore instance.</returns>
+        /// <param name="options">初始化 Yolo 模型的选项。</param>
+        /// <returns>初始化的 YoloCore 实例。</returns>
         private static YoloCore InitializeYoloCore(YoloOptions options)
         {
             //var yoloCore = new YoloCore(options.OnnxModel, options.Cuda, options.PrimeGpu, options.GpuId);

@@ -7,46 +7,46 @@ namespace YoloDotNet.Models
     public class ObjectResult
     {
         /// <summary>
-        /// Label information associated with the detected object.
+        /// 与检测到的对象关联的标签信息。
         /// </summary>
         public LabelModel Label { get; set; } = new();
 
         /// <summary>
-        /// Confidence score of the detected object.
+        /// 检测到的对象的置信度分数。
         /// </summary>
         public double Confidence { get; set; }
 
         /// <summary>
-        /// Region of interest (bounding box) of the detected object.
+        /// 检测到的对象的感兴趣区域（边界框）。
         /// </summary>
         public SKRectI BoundingBox { get; set; }
 
         /// <summary>
-        /// Region of interest (bounding box) of the detected object for ONNX model dimensions.
+        /// 针对 ONNX 模型维度的检测对象的感兴趣区域（边界框）。
         /// </summary>
         public SKRect BoundingBoxUnscaled { get; set; }
 
         /// <summary>
-        /// Index of bounding box
+        /// 边界框的索引
         /// </summary>
         public int BoundingBoxIndex { get; set; }
 
         /// <summary>
-        /// Bit-packed mask where each bit represents a pixel with confidence above a threshold (1 = present, 0 = absent).
+        /// 位压缩掩码，其中每个位表示置信度高于阈值的像素（1 = 存在，0 = 不存在）。
         /// </summary>
         public byte[] BitPackedPixelMask { get; set; } = [];
 
         /// <summary>
-        /// Confidence value, X and Y coordinates for Pose Estimation key points
+        /// 姿态估计关键点的置信度值、X 和 Y 坐标
         /// </summary>
         public KeyPoint[] KeyPoints { get; set; } = [];
 
         /// <summary>
-        /// Orientation angle of the bounding box for OBB detections.
+        /// OBB 检测的边界框的方向角度。
         /// </summary>
         public float OrientationAngle { get; set; }
 
-        #region Mapping methods
+        #region 映射方法
         public static explicit operator ObjectDetection(ObjectResult result) => new()
         {
             Label = result.Label,

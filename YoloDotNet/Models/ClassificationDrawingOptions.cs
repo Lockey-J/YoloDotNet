@@ -5,10 +5,10 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Configuration options for drawing classification results.
+    /// 用于绘制分类结果的配置选项。
     /// </summary>
     public class ClassificationDrawingOptions : CommonDrawingFontOptions
     {
-        // Only inherit CommonDrawingFontOptions; no extra needed.
+        // 仅继承 CommonDrawingFontOptions；无需额外内容。
     }
 }

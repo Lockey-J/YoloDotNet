@@ -5,17 +5,17 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Represents the result of image classification
+    /// 表示图像分类的结果
     /// </summary>
     public class Classification : IClassification
     {
         /// <summary>
-        /// Label of classified image.
+        /// 分类图像的标签。
         /// </summary>
         public string Label { get; set; } = default!;
 
         /// <summary>
-        /// Confidence score of classified image.
+        /// 分类图像的置信度分数。
         /// </summary>
         public double Confidence { get; set; }
     }

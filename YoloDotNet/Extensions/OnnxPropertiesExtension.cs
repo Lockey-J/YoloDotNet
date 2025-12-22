@@ -7,10 +7,10 @@ namespace YoloDotNet.Extensions
     internal static class OnnxPropertiesExtension
     {
         /// <summary>
-        /// Extracts and retrieves metadata properties from the ONNX model.
+        /// 从 ONNX 模型中提取和检索元数据属性。
         /// </summary>
-        /// <param name="session">The ONNX model inference session.</param>
-        /// <returns>An instance of OnnxModel containing extracted metadata properties.</returns>
+        /// <param name="session">ONNX 模型推理会话。</param>
+        /// <returns>包含提取的元数据属性的 OnnxModel 实例。</returns>
         public static OnnxModel GetOnnxProperties(this OnnxDataRecord onnxData)
         {
             var metaData = onnxData.MetaData;
@@ -48,7 +48,7 @@ namespace YoloDotNet.Extensions
         #region Helper methods
 
         /// <summary>
-        /// Maps ONNX labels to corresponding colors for visualization.
+        /// 将 ONNX 标签映射到对应的可视化颜色。
         /// </summary>
         private static LabelModel[] MapLabelsAndColors(string onnxLabelData, ModelType modelType)
         {
@@ -71,7 +71,7 @@ namespace YoloDotNet.Extensions
             => metadata.ToString().ToLower();
 
         /// <summary>
-        /// Retrieves the input shape of a model based on metadata
+        /// 根据元数据检索模型的输入形状
         /// </summary>
         private static Input GetModelInputShape(int[] inputShapes)
         {
@@ -83,7 +83,7 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Retrieves the output shapes of a model based on metadata and model type.
+        /// 根据元数据和模型类型检索模型的输出形状。
         /// </summary>
         private static List<Output> GetOutputShapes(int[][] outputDimensions, ModelType modelType)
         {
@@ -101,7 +101,7 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Get ONNX model type
+        /// 获取 ONNX 模型类型
         /// </summary>
         private static ModelType GetModelType(string modelType) => (ModelType)(typeof(ModelType)
             .GetFields()
@@ -109,7 +109,7 @@ namespace YoloDotNet.Extensions
             .GetValue(null)!;
 
         /// <summary>
-        /// Get ONNX model version
+        /// 获取 ONNX 模型版本
         /// </summary>
         private static ModelVersion GetModelVersion(string modelDescription) => modelDescription.ToLower() switch
         {

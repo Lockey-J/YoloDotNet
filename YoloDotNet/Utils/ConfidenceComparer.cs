@@ -10,7 +10,7 @@ namespace YoloDotNet.Utils
 
         public int Compare(ObjectResult? x, ObjectResult? y)
         {
-            if (x is null) return 1;  // Nulls go last in descending order
+            if (x is null) return 1;  // 在降序排列中空值排在最后
             if (y is null) return -1;
 
             if (x.Confidence > y.Confidence) return -1;

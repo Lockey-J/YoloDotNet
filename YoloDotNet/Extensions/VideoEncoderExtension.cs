@@ -7,7 +7,7 @@ namespace YoloDotNet.Extensions
     internal static class VideoEncoderExtensions
     {
         /// <summary>
-        /// Gets the encoder name associated with the specified Encoder enum value.
+        /// 获取与指定编码器枚举值关联的编码器名称。
         /// </summary>
         /// <param name="encoder"></param>
         public static string GetEncoderName(this VideoEncoder encoder)

@@ -7,22 +7,22 @@ namespace YoloDotNet.Extensions
     public static class ImageExtension
     {
         /// <summary>
-        /// Draws classification labels on the given <see cref="SKBitmap"/>.
-        /// This method modifies the bitmap in place.
+        /// 在给定的 <see cref="SKBitmap"/> 上绘制分类标签。
+        /// 此方法就地修改位图。
         /// </summary>
-        /// <param name="image">The image on which to draw labels.</param>
-        /// <param name="classifications">A collection of classification results.</param>
-        /// <param name="options">Drawing options that control font family, size, color.</param>
+        /// <param name="image">要绘制标签的图像。</param>
+        /// <param name="classifications">分类结果的集合。</param>
+        /// <param name="options">控制字体系列、大小、颜色的绘制选项。</param>
         public static void Draw(this SKBitmap image, IEnumerable<Classification>? classifications, ClassificationDrawingOptions options = default!)
             => image.DrawClassificationLabels(classifications, options);
 
         /// <summary>
-        /// Draws classification labels on the given <see cref="SKImage"/>.
+        /// 在给定的 <see cref="SKImage"/> 上绘制分类标签。
         /// </summary>
-        /// <param name="image">The image from which to create a bitmap before drawing the labels.</param>
-        /// <param name="classifications">A collection of classification results containing labels and confidence scores.</param>
-        /// <param name="options">Drawing options that control font family, size, color.</param>
-        /// <returns>A new <see cref="SKBitmap"/> with classification labels drawn on it; the original image remains unmodified.</returns>
+        /// <param name="image">在绘制标签之前要从中创建位图的图像。</param>
+        /// <param name="classifications">包含标签和置信度分数的分类结果集合。</param>
+        /// <param name="options">控制字体系列、大小、颜色的绘制选项。</param>
+        /// <returns>绘制了分类标签的新 <see cref="SKBitmap"/>；原始图像保持不变。</returns>
         public static SKBitmap Draw(this SKImage image, IEnumerable<Classification>? classifications, ClassificationDrawingOptions options = default!)
         {
             var img = SKBitmap.FromImage(image);
@@ -32,22 +32,22 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Draws bounding boxes around detected objects on the given <see cref="SKBitmap"/>.
-        /// This method modifies the bitmap in place.
+        /// 在给定的 <see cref="SKBitmap"/> 上围绕检测到的对象绘制边界框。
+        /// 此方法就地修改位图。
         /// </summary>
-        /// <param name="image">The image on which to draw bounding boxes.</param>
-        /// <param name="objectDetections">An enumerable collection of objects representing the detected items.</param>
-        /// <param name="options">Drawing options that control bounding box appearance, labels, confidence scores, fonts, and other visuals.</param>
+        /// <param name="image">要绘制边界框的图像。</param>
+        /// <param name="objectDetections">表示检测到的项目的对象的可枚举集合。</param>
+        /// <param name="options">控制边界框外观、标签、置信度分数、字体和其他视觉效果的绘制选项。</param>
         public static void Draw(this SKBitmap image, IEnumerable<ObjectDetection>? objectDetections, DetectionDrawingOptions options = default!)
             => image.DrawBoundingBoxes(objectDetections, options);
 
         /// <summary>
-        /// Draws bounding boxes around detected objects on the given <see cref="SKImage"/>.
+        /// 在给定的 <see cref="SKImage"/> 上围绕检测到的对象绘制边界框。
         /// </summary>
-        /// <param name="image">The image on which to draw bounding boxes.</param>
-        /// <param name="objectDetections">An enumerable collection of objects representing the detected items.</param>
-        /// <param name="options">Drawing options that control bounding box appearance, labels, confidence scores, fonts, and other visuals.</param>
-        /// <returns>A new <see cref="SKBitmap"/> with bounding boxes drawn on it.</returns>
+        /// <param name="image">要绘制边界框的图像。</param>
+        /// <param name="objectDetections">表示检测到的项目的对象的可枚举集合。</param>
+        /// <param name="options">控制边界框外观、标签、置信度分数、字体和其他视觉效果的绘制选项。</param>
+        /// <returns>绘制了边界框的新 <see cref="SKBitmap"/>。</returns>
         public static SKBitmap Draw(this SKImage image, IEnumerable<ObjectDetection>? objectDetections, DetectionDrawingOptions options = default!)
         {
             var img = SKBitmap.FromImage(image);
@@ -57,23 +57,23 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Draws oriented bounding boxes (OBBs) around detected objects on the given <see cref="SKBitmap"/>.
-        /// This method modifies the bitmap in place.
+        /// 在给定的 <see cref="SKBitmap"/> 上围绕检测到的对象绘制定向边界框 (OBB)。
+        /// 此方法就地修改位图。
         /// </summary>
-        /// <param name="image">The image on which to draw oriented bounding boxes.</param>
-        /// <param name="detections">An enumerable collection of objects representing the detected items.</param>
-        /// <param name="options">Drawing options that control bounding box appearance, labels, confidence scores, fonts, and other visuals.</param>
+        /// <param name="image">要绘制定向边界框的图像。</param>
+        /// <param name="detections">表示检测到的项目的对象的可枚举集合。</param>
+        /// <param name="options">控制边界框外观、标签、置信度分数、字体和其他视觉效果的绘制选项。</param>
         public static void Draw(this SKBitmap image, IEnumerable<OBBDetection>? detections, DetectionDrawingOptions options = default!)
             => image.DrawOrientedBoundingBoxes(detections, options);
 
         /// <summary>
-        /// Draws oriented bounding boxes (OBBs) around detected objects on the given <see cref="SKImage"/>.
+        /// 在给定的 <see cref="SKImage"/> 上围绕检测到的对象绘制定向边界框 (OBB)。
         /// </summary>
-        /// <param name="image">The image on which to draw oriented bounding boxes.</param>
-        /// <param name="detections">An enumerable collection of objects representing the detected items.</param>
-        /// <param name="options">Drawing options that control bounding box appearance, labels, confidence scores, fonts, and other visuals.</param>
+        /// <param name="image">要绘制定向边界框的图像。</param>
+        /// <param name="detections">表示检测到的项目的对象的可枚举集合。</param>
+        /// <param name="options">控制边界框外观、标签、置信度分数、字体和其他视觉效果的绘制选项。</param>
         /// <returns>
-        /// A new <see cref="SKBitmap"/> with oriented bounding boxes and optional confidence labels drawn on it.
+        /// 绘制了定向边界框和可选置信度标签的新 <see cref="SKBitmap"/>。
         /// </returns>
         public static SKBitmap Draw(this SKImage image, IEnumerable<OBBDetection>? detections, DetectionDrawingOptions options = default!)
         {
@@ -84,12 +84,12 @@ namespace YoloDotNet.Extensions
         }
 
         /// <summary>
-        /// Draws segmentation masks and bounding boxes on the specified <see cref="SKBitmap"/>.
-        /// This method modifies the bitmap in place by overlaying the selected segments and labels.
+        /// 在指定的 <see cref="SKBitmap"/> 上绘制分割掩码和边界框。
+        /// 此方法通过叠加选定的段和标签来就地修改位图。
         /// </summary>
-        /// <param name="image">The image on which to draw segmentations.</param>
-        /// <param name="segmentations">A list of segmentation information, including rectangles and segmented pixels.</param>
-        /// <param name="options">Drawing options that control segmentation mas, bounding box appearance, labels, confidence scores, fonts, and other visuals.</param>
+        /// <param name="image">要绘制分割的图像。</param>
+        /// <param name="segmentations">分割信息列表，包括矩形和分割像素。</param>
+        /// <param name="options">控制分割掩码、边界框外观、标签、置信度分数、字体和其他视觉效果的绘制选项。</param>
         public static void Draw(this SKBitmap image, IEnumerable<Segmentation>? segmentations, SegmentationDrawingOptions options = default!)
             => image.DrawSegmentations(segmentations, options);
 

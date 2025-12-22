@@ -1,4 +1,4 @@
-﻿# YoloDotNet with TensorRT Execution Provider
+﻿# YoloDotNet 与 TensorRT 执行提供程序
 
 TensorRT is NVIDIA’s high-performance deep learning inference optimizer and runtime library. It accelerates neural network inference by optimizing models and efficiently running them on NVIDIA GPUs. By leveraging TensorRT, applications can achieve significant speed-ups, reduced latency, and lower power consumption compared to standard GPU or CPU inference.
 

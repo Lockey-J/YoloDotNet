@@ -5,7 +5,7 @@
 namespace YoloDotNet.Enums
 {
     /// <summary>
-    /// Strongly typed names for image vision types.
+    /// 图像视觉类型的强类型名称。
     /// </summary>
     [DataContract]
     public enum ModelType

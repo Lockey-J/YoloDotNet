@@ -20,34 +20,34 @@ using Window = System.Windows.Window;
 namespace WebcamDemo
 {
     /// <summary>
-    /// Demonstrates real-time object detection and tracking from a webcam using YoloDotNet and EmguCV.
+    /// 使用 YoloDotNet 和 EmguCV 演示从网络摄像头进行实时对象检测和跟踪。
     /// 
-    /// This demo captures frames directly from the webcam, performs object detection using YOLO models, 
-    /// and optionally applies multi-object tracking (SORT). Detected objects are drawn on the frames with 
-    /// bounding boxes, labels, confidence scores, and tracked tails.
+    /// 此演示直接从网络摄像头捕获帧，使用 YOLO 模型执行对象检测，
+    /// 并可选地应用多对象跟踪（SORT）。检测的对象绘制在帧上，
+    /// 包括边界框、标签、置信度分数和跟踪轨迹。
     /// 
-    /// It showcases:
-    /// - Model initialization with configurable hardware acceleration (CUDA, with optional TensorRT integration) and preprocessing options
-    /// - Real-time object detection on live webcam input using YoloDotNet
-    /// - Optional class label filtering (e.g., detecting only persons)
-    /// - Optional multi-object tracking across frames using the SORT tracker
-    /// - Direct rendering of detection and tracking results on the live video feed
-    /// - Frame processing time reporting for performance monitoring
+    /// 它展示了：
+    /// - 可配置硬件加速（CUDA，可选 TensorRT 集成）和预处理选项的模型初始化
+    /// - 使用 YoloDotNet 在实时网络摄像头输入上进行对象检测
+    /// - 可选的类别标签过滤（例如，仅检测人员）
+    /// - 使用 SORT 跟踪器在帧间进行可选的多对象跟踪
+    /// - 在实时视频源上直接渲染检测和跟踪结果
+    /// - 帧处理时间报告以进行性能监控
     /// 
-    /// Example webcam sources:
-    /// - Default webcam device (index 0)
-    /// - Additional devices by index (e.g., 1 for a secondary camera)
+    /// 网络摄像头源示例：
+    /// - 默认网络摄像头设备（索引 0）
+    /// - 按索引的附加设备（例如，1 表示辅助摄像头）
     /// 
-    /// Execution providers:
-    /// - CpuExecutionProvider: runs inference on CPU, universally supported but slower.
-    /// - CudaExecutionProvider: executes inference on an NVIDIA GPU using CUDA for accelerated performance.
-    ///   Optionally integrates with TensorRT for further optimization, supporting FP32, FP16, and INT8 precision modes.
-    ///   This delivers significant speed improvements on compatible GPUs.
+    /// 执行提供程序：
+    /// - CpuExecutionProvider：在 CPU 上运行推理，通用支持但速度较慢。
+    /// - CudaExecutionProvider：使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。
+    ///   可选地与 TensorRT 集成以进一步优化，支持 FP32、FP16 和 INT8 精度模式。
+    ///   这在兼容的 GPU 上提供显著的速度改进。
     /// 
-    /// Important notes:
-    /// - Choose the execution provider based on your hardware and performance requirements.
-    /// - If using CUDA with TensorRT enabled, ensure your environment has a compatible CUDA, cuDNN, and TensorRT setup.
-    /// - For detailed setup instructions and examples, see the README:
+    /// 重要说明：
+    /// - 根据硬件和性能要求选择执行提供程序。
+    /// - 如果使用启用 TensorRT 的 CUDA，请确保您的环境具有兼容的 CUDA、cuDNN 和 TensorRT 设置。
+    /// - 有关详细的设置说明和示例，请参见 README：
     ///   https://github.com/NickSwardh/YoloDotNet
     /// </summary>
     public partial class MainWindow : Window
@@ -82,31 +82,31 @@ namespace WebcamDemo
         {
             InitializeComponent();
 
-            // Initialize stopwatch for simple measuring of frame processing time
+            // 初始化秒表，用于简单测量帧处理时间
             _stopwatch = new Stopwatch();
 
             // (Optional) Create a new SortTracker instance with configurable parameters:
             // - costThreshold: matching cost threshold for assigning detections to tracks (lower = stricter matching).
             // - maxAge: number of frames to keep unmatched tracks before removal.
             // - tailLength: length of the track history for visualization or analysis.
-            // Note: There is no one-size-fits-all setting; these parameters often require some tinkering to find the best balance for your specific use case.
+            // 注意：没有一刀切的设置；这些参数通常需要一些调整才能为您的特定用例找到最佳平衡。
             _sortTracker = new SortTracker(costThreshold: 0.5f, maxAge: 5, tailLength: 30);
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             _yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
-                //     Runs inference entirely on the CPU. Universally supported on all hardware.
+                //     完全在 CPU 上运行推理。所有硬件上通用支持。
                 //
                 //   - CudaExecutionProvider
-                //     Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
-                //     Optionally integrates with TensorRT for further optimization, supporting FP32, FP16,  
-                //     and INT8 precision modes. This delivers significant speed improvements on compatible GPUs.  
-                //     See the TensorRT demo and documentation for detailed configuration and best practices.
+                //     使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。  
+                //     可选地与 TensorRT 集成以进一步优化，支持 FP32、FP16  
+                //     和 INT8 精度模式。这在兼容的 GPU 上提供显著的速度改进。  
+                //     有关详细配置和最佳实践，请参见 TensorRT 演示和文档。
                 //
                 //   - OpenVinoExecutionProvider
                 //     Runs inference using Intel's OpenVINO toolkit for optimized performance on Intel hardware.
@@ -124,15 +124,15 @@ namespace WebcamDemo
 
                 ExecutionProvider = new CudaExecutionProvider(
 
-                    // Path or byte[] of the ONNX model to load.
+                    // 要加载的 ONNX 模型的路径或字节数组。
                     model: SharedConfig.GetTestModelV11(ModelType.ObjectDetection),
 
-                    // GPU device Id to use for inference. -1 = CPU, 0+ = GPU device Id.
+                    // 用于推理的 GPU 设备 ID。-1 = CPU，0+ = GPU 设备 ID。
                     gpuId: 0),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 调整图像大小以适应目标大小而不保持宽高比。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
                 // Sampling options for resizing; affects inference speed and quality.

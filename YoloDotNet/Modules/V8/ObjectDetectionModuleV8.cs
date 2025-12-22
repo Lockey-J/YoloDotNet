@@ -31,7 +31,7 @@ namespace YoloDotNet.Modules.V8
             var result = _yoloCore.Run(image);
             var detections = ObjectDetection(result, confidence, iou);
 
-            // Convert to List<ObjectDetection>
+            // 转换为 List<ObjectDetection>
             var results = new List<ObjectDetection>(detections.Length);
             for (int i = 0; i < detections.Length; i++)
                 results.Add((ObjectDetection)detections[i]);
@@ -42,13 +42,13 @@ namespace YoloDotNet.Modules.V8
         #region Helper methods
 
         /// <summary>
-        /// Detects objects in a tensor and returns a ObjectDetection list.
+        /// 在张量中检测对象并返回 ObjectDetection 列表。
         /// </summary>
-        /// <param name="imageSize">The image associated with the tensor data.</param>
-        /// <param name="confidenceThreshold">The confidence threshold for accepting object detections.</param>
-        /// <param name="overlapThreshold">The threshold for overlapping boxes to filter detections.</param>
-        /// <returns>A list of result models representing detected objects.</returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)] // Inline this small method better performance
+        /// <param name="imageSize">与张量数据关联的图像。</param>
+        /// <param name="confidenceThreshold">接受对象检测的置信度阈值。</param>
+        /// <param name="overlapThreshold">过滤检测的重叠框的阈值。</param>
+        /// <returns>表示检测到对象的结果模型列表。</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // 内联此小方法以获得更好的性能
         public Span<ObjectResult> ObjectDetection(InferenceResult inferenceResult, double confidenceThreshold, double overlapThreshold)
         {
             var imageSize = inferenceResult.ImageOriginalSize;
@@ -70,13 +70,13 @@ namespace YoloDotNet.Modules.V8
             {
                 for (int i = 0; i < _channels; i++)
                 {
-                    // Move forward to confidence value of first label
+                    // 前进到第一个标签的置信度值
                     var labelOffset = i + _channels4;
 
                     float bestConfidence = 0f;
                     int bestLabelIndex = -1;
 
-                    // Get confidence and label for current bounding box
+                    // 获取当前边界框的置信度和标签
                     for (var l = 0; l < _labels; l++, labelOffset += _channels)
                     {
                         var boxConfidence = ortSpan[labelOffset];
@@ -88,7 +88,7 @@ namespace YoloDotNet.Modules.V8
                         }
                     }
 
-                    // Stop early if confidence is low
+                    // 如果置信度低，提前停止
                     if (bestConfidence < confidenceThreshold)
                         continue;
 
@@ -99,12 +99,12 @@ namespace YoloDotNet.Modules.V8
 
                     var (xMin, yMin, xMax, yMax) = (0, 0, 0, 0);
 
-                    // Bounding box calculations are based on how the input image was resized
-                    // 'Proportional' keeps the original aspect ratio and adds padding around the image
-                    // 'Stretched' scales the image to fill the dimensions, possibly distorting the aspect ratio
+                    // 边界框计算基于输入图像的调整大小方式
+                    // 'Proportional' 保持原始纵横比并在图像周围添加填充
+                    // 'Stretched' 缩放图像以填充尺寸，可能会扭曲纵横比
                     if (_yoloCore.YoloOptions.ImageResize == ImageResize.Proportional)
                     {
-                        var gain = xGain; // Scale factor for proportional resizing
+                        var gain = xGain; // 比例调整大小的缩放因子
 
                         xMin = (int)((x - w / 2 - xPad) * gain);
                         yMin = (int)((y - h / 2 - yPad) * gain);
@@ -116,8 +116,8 @@ namespace YoloDotNet.Modules.V8
                         var halfW = w / 2;
                         var halfH = h / 2;
 
-                        // Calculate bounding box coordinates adjusted for stretched scaling and padding
-                        // Clamp ensures the coordinates remain within the valid bounds of the image.
+                        // 计算调整拉伸缩放和填充的边界框坐标
+                        // Clamp 确保坐标保持在图像的有效边界内。
                         //xMin = Math.Clamp((int)((x - halfW - xPad) / xGain), 0, width - 1);
                         //yMin = Math.Clamp((int)((y - halfH - yPad) / yGain), 0, height - 1);
                         //xMax = Math.Clamp((int)((x + halfW - xPad) / xGain), 0, width - 1);
@@ -136,7 +136,7 @@ namespace YoloDotNet.Modules.V8
                         yMax = valYMax < 0 ? 0 : (valYMax > height - 1 ? height - 1 : valYMax);
                     }
 
-                    // Unscaled coordinates for resized input image
+                    // 调整后输入图像的未缩放坐标
                     var sxMin = (int)(x - w / 2);
                     var syMin = (int)(y - h / 2);
                     var sxMax = (int)(x + w / 2);
@@ -156,10 +156,10 @@ namespace YoloDotNet.Modules.V8
                     };
                 }
 
-                // Get only the valid portion of the rented array
+                // 获取租用数组的有效部分
                 var resultArray = boxes.AsSpan(0, validBoxCount);
 
-                // Remove overlapping boxes using Non-Maximum Suppression (NMS)
+                // 使用非极大值抑制(NMS)移除重叠框
                 return _yoloCore.RemoveOverlappingBoxes(resultArray, overlapThreshold);
             }
             finally

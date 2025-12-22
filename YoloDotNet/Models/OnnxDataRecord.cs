@@ -5,15 +5,16 @@
 namespace YoloDotNet.Models
 {
     /// <summary>
-    /// Record to hold ONNX model data from execution providers.
+    /// 用于保存来自执行提供程序的 ONNX 模型数据的记录。
     /// </summary>
-    /// <param name="MetaData"></param>
-    /// <param name="InputName"></param>
-    /// <param name="OutputNames"></param>
-    /// <param name="InputShape"></param>
-    /// <param name="OutputShapes"></param>
-    /// <param name="InputShapeSize"></param>
-    /// <param name="Labels"></param>
+    /// <param name="MetaData">元数据</param>
+    /// <param name="ModelDataType">模型数据类型</param>
+    /// <param name="InputName">输入名称</param>
+    /// <param name="OutputNames">输出名称</param>
+    /// <param name="InputShape">输入形状</param>
+    /// <param name="OutputShapes">输出形状</param>
+    /// <param name="InputShapeSize">输入形状大小</param>
+    /// <param name="Labels">标签</param>
     public record OnnxDataRecord(
         Dictionary<string, string> MetaData,
         ModelDataType ModelDataType,

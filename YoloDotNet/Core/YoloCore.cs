@@ -1,11 +1,11 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023-2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
 namespace YoloDotNet.Core
 {
     /// <summary>
-    /// Initializes a new instance of the Yolo core class.
+    /// 初始化 Yolo 核心类的新实例。
     /// </summary>
     internal class YoloCore(YoloOptions yoloOptions) : IDisposable
     {
@@ -23,7 +23,7 @@ namespace YoloDotNet.Core
         public ModelType ModelType => OnnxModel.ModelType;
 
         /// <summary>
-        /// Initializes the YOLO model with the specified model type.
+        /// 使用指定的模型类型初始化 YOLO 模型。
         /// </summary>
         public void InitializeYolo()
         {
@@ -46,9 +46,9 @@ namespace YoloDotNet.Core
         }
 
         /// <summary>
-        /// Runs the YOLO model on the provided image and returns the inference results.
+        /// 在提供的图像上运行 YOLO 模型并返回推理结果。
         /// </summary>
-        /// <param name="image">The input image to process.</param>
+        /// <param name="image">要处理的输入图像。</param>
         /// <returns>InferenceResult()</returns>
         public InferenceResult Run<T>(T image)
         {
@@ -61,15 +61,15 @@ namespace YoloDotNet.Core
 
                 try
                 {
-                    // Resize image to model input size and store in pinned buffer for faster access
+                    // 将图像调整大小为模型输入大小并存储在固定缓冲区中以加快访问速度
                     var originalImageSize = YoloOptions.ImageResize == ImageResize.Proportional
                         ? image.ResizeImageProportional(YoloOptions.SamplingOptions, pinnedBuffer)
                         : image.ResizeImageStretched(YoloOptions.SamplingOptions, pinnedBuffer);
 
-                    // Declare struct to hold inference results
+                    // 声明结构体来保存推理结果
                     InferenceResult inferenceResult;
 
-                    // Run inference using the selected execution provider and model data type
+                    // 使用选定的执行提供程序和模型数据类型运行推理
                     if (OnnxModel.ModelDataType == ModelDataType.Float16)
                     {
                         pinnedBuffer.Pointer.NormalizePixelsToArray(_inputShape, _inputShapeSize, normalizedPixelsUshortBuffer);
@@ -81,15 +81,15 @@ namespace YoloDotNet.Core
                         inferenceResult = YoloOptions.ExecutionProvider.Run<float>(normalizedPixelsFloatBuffer);
                     }
 
-                    // Attach original image size to the inference result for use to calculate bounding boxes to original image size.
+                    // 将原始图像大小附加到推理结果，用于计算到原始图像大小的边界框。
                     inferenceResult.ImageOriginalSize = originalImageSize;
 
                     return inferenceResult;
                 }
                 finally
                 {
-                    // Return rented buffers to their respective pools wuithout clearing for performance.
-                    // WARNING: Only disable clearing if data is overwritten on next use to avoid data leakage!
+                    // 为了性能，将租用的缓冲区返回到各自的池中而不清除。
+                    // 警告：仅在下一次使用时数据被覆盖的情况下才禁用清除，以避免数据泄漏！
                     ArrayPool<float>.Shared.Return(normalizedPixelsFloatBuffer, false);
                     ArrayPool<ushort>.Shared.Return(normalizedPixelsUshortBuffer, false);
 
@@ -101,11 +101,11 @@ namespace YoloDotNet.Core
         #region Helper methods
 
         /// <summary>
-        /// Removes overlapping bounding boxes in a list of object detection results.
+        /// 移除对象检测结果列表中的重叠边界框。
         /// </summary>
-        /// <param name="predictionSpan">A span with predition results</param>
-        /// <param name="iouThreshold">Higher Iou-threshold result in fewer detections by excluding overlapping boxes.</param>
-        /// <returns>A filtered Span<ObjectResult> with non-overlapping bounding boxes based on confidence scores.</returns>
+        /// <param name="predictionSpan">包含预测结果的 Span</param>
+        /// <param name="iouThreshold">更高的 IoU 阈值通过排除重叠框导致更少的检测。</param>
+        /// <returns>基于置信度分数过滤的非重叠边界框的 Span<ObjectResult>。</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<ObjectResult> RemoveOverlappingBoxes(Span<ObjectResult> predictionSpan, double iouThreshold)
         {
@@ -114,7 +114,7 @@ namespace YoloDotNet.Core
             if (totalPredictions == 0)
                 return [];
 
-            // Sort by confidence
+            // 按置信度排序
             MemoryExtensions.Sort(predictionSpan, ConfidenceComparer.Instance);
 
             var buffer = ArrayPool<ObjectResult>.Shared.Rent(totalPredictions);
@@ -148,43 +148,43 @@ namespace YoloDotNet.Core
         }
 
         /// <summary>
-        /// Calculate buffer pool size as the next power of two to ensure array pool efficiency.
+        /// 将缓冲池大小计算为2的次幂以确保数组池效率。
         /// </summary>
         public static int CalculateBufferPoolSize(int bufferSize) => 1 << (int)Math.Ceiling(Math.Log2(bufferSize));
 
         /// <summary>
-        /// Squash value to a number between 0 and 1
+        /// 将值压缩到0和1之间的数字
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Sigmoid(float value) => 1 / (1 + MathF.Exp(-value));
 
         /// <summary>
-        /// Calculate pixel luminance
+        /// 计算像素亮度
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte CalculatePixelLuminance(float value) => (byte)(255 - value * 255);
 
         /// <summary>
-        /// Calculate pixel by byte to confidence
+        /// 按字节计算像素置信度
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float CalculatePixelConfidence(byte value) => value / 255F;
 
         /// <summary>
-        /// Calculate radian to degree
+        /// 计算弧度到角度
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float CalculateRadianToDegree(float value) => value * (180 / (float)Math.PI);
 
         /// <summary>
-        /// Calculates the Intersection over Union (IoU) between two rectangles.
+        /// 计算两个矩形之间的交并比 (IoU)。
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float CalculateIoU(in SKRectI a, in SKRectI b)
         {
-            // Use "in" keyword on parameters to pass by reference without allowing modification for better performance.
+            // 在参数上使用 "in" 关键字以通过引用传递而不允许修改，以获得更好的性能。
 
             int left = Math.Max(a.Left, b.Left);
             int top = Math.Max(a.Top, b.Top);
@@ -210,10 +210,10 @@ namespace YoloDotNet.Core
             => YoloOptions.ImageResize == ImageResize.Proportional ? CalculateProportionalGain(size) : CalculateStretchedGain(size);
 
         /// <summary>
-        /// Calculates the padding and scaling factor needed to adjust the bounding box
-        /// so that the detected object can be resized to match the original image size.
+        /// 计算调整边界框所需的填充和缩放因子，
+        /// 以便检测到的对象可以调整大小以匹配原始图像大小。
         /// </summary>
-        /// <param name="size">The original image size.</param>
+        /// <param name="size">原始图像大小。</param>
         public (float, float, float, float) CalculateProportionalGain(SKSizeI size)
         {
             var model = OnnxModel;
@@ -228,23 +228,23 @@ namespace YoloDotNet.Core
         }
 
         /// <summary>
-        /// Calculates the padding and scaling factor needed to adjust the bounding box
-        /// so that the detected object can be resized to match the original image size.
+        /// 计算调整边界框所需的填充和缩放因子，
+        /// 以便检测到的对象可以调整大小以匹配原始图像大小。
         /// </summary>
-        /// <param name="size">The original image size.</param>
+        /// <param name="size">原始图像大小。</param>
         public (float, float, float, float) CalculateStretchedGain(SKSizeI size)
         {
             var model = OnnxModel;
 
-            var (w, h) = (size.Width, size.Height); // image w and h
-            var (xGain, yGain) = (model.Input.Width / (float)w, model.Input.Height / (float)h); // x, y gains
-            var (xPad, yPad) = ((model.Input.Width - w * xGain) / 2, (model.Input.Height - h * yGain) / 2); // left, right pads
+            var (w, h) = (size.Width, size.Height); // 图像宽度和高度
+            var (xGain, yGain) = (model.Input.Width / (float)w, model.Input.Height / (float)h); // x, y 增益
+            var (xPad, yPad) = ((model.Input.Width - w * xGain) / 2, (model.Input.Height - h * yGain) / 2); // 左右填充
 
             return (xPad, yPad, xGain, yGain);
         }
 
         /// <summary>
-        /// Verify that loaded model is of the expected type
+        /// 验证加载的模型是否为预期类型
         /// </summary>
         public void VerifyExpectedModelType(ModelType expectedModelType)
         {
@@ -253,7 +253,7 @@ namespace YoloDotNet.Core
         }
 
         /// <summary>
-        /// Releases resources and suppresses the finalizer for the current object.
+        /// 释放资源并禁止当前对象的终结器。
         /// </summary>
         public void Dispose()
         {

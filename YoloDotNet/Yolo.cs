@@ -1,13 +1,13 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2023-2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
 namespace YoloDotNet
 {
     /// <summary>
-    /// Initializes a new instance of YoloDotNet.
+    /// 初始化 YoloDotNet 的新实例。
     /// </summary>
-    /// <param name="options">Options for initializing the YoloDotNet model.</param>
+    /// <param name="options">初始化 YoloDotNet 模型的选项。</param>
     public class Yolo(YoloOptions options) : IDisposable
     {
         #region Private fields
@@ -28,20 +28,20 @@ namespace YoloDotNet
         #region Classification
 
         /// <summary>
-        /// Run image classification on an Image.
+        /// 在图像上运行图像分类。
         /// </summary>
-        /// <param name="img">The SKBitmap to classify.</param>
-        /// <param name="classes">The number of classes to return (default is 1).</param>
-        /// <returns>A list of classification results.</returns>
+        /// <param name="img">要分类的 SKBitmap。</param>
+        /// <param name="classes">要返回的类别数量（默认为 1）。</param>
+        /// <returns>分类结果列表。</returns>
         public List<Classification> RunClassification(SKBitmap img, int classes = 1)
             => ((IClassificationModule)_detection).ProcessImage(img, classes, 0, 0);
 
         /// <summary>
-        /// Run image classification on an Image.
+        /// 在图像上运行图像分类。
         /// </summary>
-        /// <param name="img">The SKImage to classify.</param>
-        /// <param name="classes">The number of classes to return (default is 1).</param>
-        /// <returns>A list of classification results.</returns>
+        /// <param name="img">要分类的 SKImage。</param>
+        /// <param name="classes">要返回的类别数量（默认为 1）。</param>
+        /// <returns>分类结果列表。</returns>
         public List<Classification> RunClassification(SKImage img, int classes = 1)
             => ((IClassificationModule)_detection).ProcessImage(img, classes, 0, 0);
 
@@ -50,22 +50,22 @@ namespace YoloDotNet
         #region Object Detection
 
         /// <summary>
-        /// Run object detection on an Image.
+        /// 在图像上运行对象检测。
         /// </summary>
-        /// <param name="img">The SKBitmap to obb detect.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of classification results.</returns>
+        /// <param name="img">要进行 OBB 检测的 SKBitmap。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分类结果列表。</returns>
         public List<ObjectDetection> RunObjectDetection(SKBitmap img, double confidence = 0.2, double iou = 0.7)
             => ((IObjectDetectionModule)_detection).ProcessImage(img, confidence, 0, iou);
 
         /// <summary>
-        /// Run object detection on an Image.
+        /// 在图像上运行对象检测。
         /// </summary>
-        /// <param name="img">The SKImage to obb detect.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of classification results.</returns>
+        /// <param name="img">要进行 OBB 检测的 SKImage。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分类结果列表。</returns>
         public List<ObjectDetection> RunObjectDetection(SKImage img, double confidence = 0.2, double iou = 0.7)
              => ((IObjectDetectionModule)_detection).ProcessImage(img, confidence, 0, iou);
 
@@ -74,22 +74,22 @@ namespace YoloDotNet
         #region OBB (Oriented Bounding Box)
 
         /// <summary>
-        /// Run oriented bounding bBox detection on an image.
+        /// 在图像上运行定向边界框检测。
         /// </summary>
-        /// <param name="img">The SKBitmap to obb detect.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要进行 OBB 检测的 SKBitmap。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<OBBDetection> RunObbDetection(SKBitmap img, double confidence = 0.2, double iou = 0.7)
             => ((IOBBDetectionModule)_detection).ProcessImage(img, confidence, 0, iou);
 
         /// <summary>
-        /// Run oriented bounding bBox detection on an image.
+        /// 在图像上运行定向边界框检测。
         /// </summary>
-        /// <param name="img">The SKImage to obb detect.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要进行 OBB 检测的 SKImage。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<OBBDetection> RunObbDetection(SKImage img, double confidence = 0.2, double iou = 0.7)
             => ((IOBBDetectionModule)_detection).ProcessImage(img, confidence, 0, iou);
 
@@ -98,22 +98,22 @@ namespace YoloDotNet
         #region Segmentation
 
         /// <summary>
-        /// Run segmentation on an image.
+        /// 在图像上运行分割。
         /// </summary>
-        /// <param name="img">The SKBitmap to segmentate.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要分割的 SKBitmap。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<Segmentation> RunSegmentation(SKBitmap img, double confidence = 0.2, double pixelConfedence = 0.65, double iou = 0.7)
             => ((ISegmentationModule)_detection).ProcessImage(img, confidence, pixelConfedence, iou);
 
         /// <summary>
-        /// Run segmentation on an image.
+        /// 在图像上运行分割。
         /// </summary>
-        /// <param name="img">The SKImage to segmentate.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要分割的 SKImage。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<Segmentation> RunSegmentation(SKImage img, double confidence = 0.2, double pixelConfedence = 0.65, double iou = 0.7)
             => ((ISegmentationModule)_detection).ProcessImage(img, confidence, pixelConfedence, iou);
 
@@ -122,22 +122,22 @@ namespace YoloDotNet
         #region Pose Estimation
 
         /// <summary>
-        /// Run pose estimation on an image.
+        /// 在图像上运行姿态估计。
         /// </summary>
-        /// <param name="img">The SKBitmap to pose estimate.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要进行姿态估计的 SKBitmap。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<PoseEstimation> RunPoseEstimation(SKBitmap img, double confidence = 0.2, double iou = 0.7)
             => ((IPoseEstimationModule)_detection).ProcessImage(img, confidence, 0, iou);
 
         /// <summary>
-        /// Run pose estimation on an image.
+        /// 在图像上运行姿态估计。
         /// </summary>
-        /// <param name="img">The SKImage to pose estimate.</param>
-        /// <param name="confidence">The confidence threshold for detected objects (default is 0.2).</param>
-        /// <param name="iou">IoU (Intersection Over Union) overlap threshold value for removing overlapping bounding boxes (default: 0.7).</param>
-        /// <returns>A list of Segmentation results.</returns>
+        /// <param name="img">要进行姿态估计的 SKImage。</param>
+        /// <param name="confidence">检测对象的置信度阈值（默认为 0.2）。</param>
+        /// <param name="iou">用于移除重叠边界框的 IoU（交并比）重叠阈值（默认：0.7）。</param>
+        /// <returns>分割结果列表。</returns>
         public List<PoseEstimation> RunPoseEstimation(SKImage img, double confidence = 0.2, double iou = 0.7)
             => ((IPoseEstimationModule)_detection).ProcessImage(img, confidence, 0, iou);
 
@@ -146,7 +146,7 @@ namespace YoloDotNet
         #region Video
 
         /// <summary>
-        /// Initializes the video stream using the specified <see cref="VideoOptions"/> and sets up event handlers for frame processing and video completion.
+        /// 使用指定的 <see cref="VideoOptions"/> 初始化视频流，并设置帧处理和视频完成的事件处理程序。
         /// </summary>
         /// <param name="videoOptions"></param>
         public void InitializeVideo(VideoOptions videoOptions)
@@ -159,29 +159,29 @@ namespace YoloDotNet
         }
 
         /// <summary>
-        /// Retrieves a list of available video input devices detected on the current system.
+        /// 获取当前系统上检测到的可用视频输入设备列表。
         /// </summary>
         /// <exception cref="YoloDotNetVideoException"></exception>
         public static List<string> GetVideoDevices()
             => FFmpegService.GetVideoDevicesOnSystem() ?? throw new YoloDotNetVideoException(
-                "No video initialized. Please call InitializeVideo() before attempting to retrieve metadata.");
+                "没有初始化视频。在尝试检索元数据之前请调用 InitializeVideo()。");
 
         /// <summary>
-        /// Retrieves metadata about the stream or initialized video, such as duration, frame rate, and resolution.
+        /// 检索有关流或初始化视频的元数据，如持续时间、帧率和分辨率。
         /// </summary>
         /// <exception cref="YoloDotNetVideoException"></exception>
         public VideoMetadata GetVideoMetaData()
             => _ffmpegService.VideoMetadata ?? throw new YoloDotNetVideoException(
-                "No video initialized. Please call InitializeVideo() before attempting to retrieve metadata.");
+                "没有初始化视频。在尝试检索元数据之前请调用 InitializeVideo()。");
 
         /// <summary>
-        /// Starts decoding and processing video frames from the initialized video stream.
+        /// 开始解码和处理来自初始化视频流的视频帧。
         /// </summary>
         public void StartVideoProcessing()
             => _ffmpegService.Start();
 
         /// <summary>
-        /// Stops video frame processing and releases resources associated with the video stream.
+        /// 停止视频帧处理并释放与视频流关联的资源。
         /// </summary>
         public void StopVideoProcessing()
             => _ffmpegService.Stop();
@@ -191,13 +191,13 @@ namespace YoloDotNet
         #region Model Info
 
         /// <summary>
-        /// Gets a description of the currently loaded YOLO model,
-        /// including the model type and version. Returns "No model loaded"
-        /// if no model has been initialized.
+        /// 获取当前加载的 YOLO 模型的描述，
+        /// 包括模型类型和版本。如果没有模型被初始化，
+        /// 则返回 "No model loaded"。
         /// </summary>
         public string ModelInfo =>
             _detection.OnnxModel == null
-                ? "No model loaded"
+                ? "没有加载模型"
                 : $"{_detection.OnnxModel.ModelType} (yolo {_detection.OnnxModel.ModelVersion.ToString().ToLower()})";
 
         #endregion

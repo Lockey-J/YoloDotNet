@@ -5,7 +5,7 @@
 namespace YoloDotNet.Trackers
 {
     /// <summary>
-    /// Stores a fixed-length queue of tail points to track and visualize the movement tail of an object.
+    /// 存储固定长度的轨迹点队列，用于跟踪和可视化对象的运动轨迹。
     /// </summary>
     /// <param name="maxLength"></param>
     public class TailTrack(int maxLength)
@@ -14,13 +14,13 @@ namespace YoloDotNet.Trackers
         private readonly Queue<SKPoint> _positions = new (maxLength);
 
         /// <summary>
-        /// Returns a copy of the current tail points as a list.
+        /// 返回当前轨迹点的副本作为列表。
         /// </summary>
         public List<SKPoint> GetTail() => [.. _positions];
 
         /// <summary>
-        /// Adds a new point to the tail.
-        /// Automatically removes the oldest point if the tail exceeds the maximum length.
+        /// 向轨迹添加新点。
+        /// 如果轨迹超过最大长度，则自动移除最旧的点。
         /// </summary>
         public void AddTailPoint(SKPoint point)
         {

@@ -16,28 +16,28 @@ using YoloDotNet.Test.Common.Enums;
 namespace ClassificationDemo
 {
     /// <summary>
-    /// Demonstrates image classification on static images using the YoloDotNet library.
+    /// 使用 YoloDotNet 库演示静态图像的分类。
     /// 
-    /// This demo loads a sample image, runs classification inference to identify the most probable class(es),
-    /// overlays the classification labels with confidence scores, and saves the annotated image to disk.
+    /// 此演示加载示例图像，运行分类推理以识别最可能的类别，
+    /// 叠加分类标签和置信度分数，并将标注的图像保存到磁盘。
     /// 
-    /// Features included:
-    /// - Model initialization with configurable hardware acceleration and image preprocessing
-    /// - Static image classification inference with configurable top-N class results
-    /// - Rendering of classification labels and confidence scores with customizable drawing options
-    /// - Saving output images with quality control and automated output folder creation
-    /// - Console reporting of classification results
+    /// 包含的功能：
+    /// - 使用可配置的硬件加速和图像预处理进行模型初始化
+    /// - 使用可配置的 Top-N 类别结果进行静态图像分类推理
+    /// - 使用可自定义的绘制选项渲染分类标签和置信度分数
+    /// - 使用质量控制和自动输出文件夹创建保存输出图像
+    /// - 控制台报告分类结果
     /// 
-    /// Execution providers:
-    /// - CpuExecutionProvider: runs inference entirely on the CPU. Universally supported but slower.
-    /// - CudaExecutionProvider: executes inference on an NVIDIA GPU using CUDA for accelerated performance.
-    ///   Optionally integrates with TensorRT for further optimization, supporting FP32, FP16, and INT8 precision modes.
+    /// 执行提供程序：
+    /// - CpuExecutionProvider：完全在 CPU 上运行推理。通用但速度较慢。
+    /// - CudaExecutionProvider：使用 CUDA 在 NVIDIA GPU 上执行推理以获得加速性能。
+    ///   可选择与 TensorRT 集成以进行进一步优化，支持 FP32、FP16 和 INT8 精度模式。
     /// 
-    /// Important notes:
-    /// - Choose the execution provider that matches your available hardware and performance requirements.
-    /// - ClassificationDrawingOptions allows customization of font, color, scaling, and label background.
-    /// - The number of classes to return can be limited to focus on the most confident predictions.
-    /// - For setup instructions and best practices, see the README:  
+    /// 重要说明：
+    /// - 选择与您可用硬件和性能要求匹配的执行提供程序。
+    /// - ClassificationDrawingOptions 允许自定义字体、颜色、缩放和标签背景。
+    /// - 可以限制返回的类别数量以专注于最自信的预测。
+    /// - 有关设置说明和最佳实践，请参阅 README：  
     ///   https://github.com/NickSwardh/YoloDotNet
     /// </summary>
     internal class Program
@@ -50,15 +50,15 @@ namespace ClassificationDemo
             CreateOutputFolder();
             SetDrawingOptions();
 
-            // Initialize YoloDotNet.
-            // YoloOptions configures the model, hardware settings, and image processing behavior.
+            // 初始化 YoloDotNet。
+            // YoloOptions 配置模型、硬件设置和图像处理行为。
             using var yolo = new Yolo(new YoloOptions
             {
-                // Select execution provider (determines how and where inference is executed).
-                // Available execution providers:
+                // 选择执行提供程序（确定推理的执行方式和位置）。
+                // 可用的执行提供程序：
                 // 
                 //   - CpuExecutionProvider
-                //     Runs inference entirely on the CPU. Universally supported on all hardware.
+                //     完全在 CPU 上运行推理。在所有硬件上通用支持。
                 //
                 //   - CudaExecutionProvider
                 //     Executes inference on an NVIDIA GPU using CUDA for accelerated performance.  
@@ -80,38 +80,38 @@ namespace ClassificationDemo
                 //   More information about execution providers and setup instructions can be found in the README:
                 //   https://github.com/NickSwardh/YoloDotNet
 
-                // Path or byte[] of the ONNX model to load.
+                // 要加载的 ONNX 模型的路径或字节数组。
                 ExecutionProvider = new CpuExecutionProvider(SharedConfig.GetTestModelV11(ModelType.Classification)),
 
-                // Resize mode applied before inference. Proportional maintains the aspect ratio (adds padding if needed),
-                // while Stretch resizes the image to fit the target size without preserving the aspect ratio.
-                // Set this accordingly, as it directly impacts the inference results.
+                // 推理前应用的调整大小模式。Proportional 保持宽高比（如果需要则添加填充），
+                // 而 Stretch 在不保持宽高比的情况下调整图像大小以适应目标大小。
+                // 相应地设置此选项，因为它直接影响推理结果。
                 ImageResize = ImageResize.Proportional,
 
-                // Sampling options for resizing; affects inference speed and quality.
-                // For examples of other sampling options, see benchmarks: https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
-                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet default
+                // 调整大小的采样选项；影响推理速度和质量。
+                // 其他采样选项的示例，请参见基准测试：https://github.com/NickSwardh/YoloDotNet/tree/master/test/YoloDotNet.Benchmarks
+                SamplingOptions = new(SKFilterMode.Nearest, SKMipmapMode.None) // YoloDotNet 默认值
             });
 
-            // Print model type
+            // 打印模型类型
             Console.WriteLine($"Loaded ONNX Model: {yolo.ModelInfo}");
 
-            // Load input image as SKBitmap (or SKImage)
-            // The image is sourced from SharedConfig for test/demo purposes.
+            // 将输入图像加载为 SKBitmap（或 SKImage）
+            // 图像从 SharedConfig 获取，用于测试/演示目的。
             using var image = SKBitmap.Decode(SharedConfig.GetTestImage(ImageType.Hummingbird));
 
-            // Perform classification inference.
-            // The 'classes' parameter limits the results to the top-N classes.
+            // 执行分类推理。
+            // 'classes' 参数将结果限制为前 N 个类别。
             List<Classification>? results = yolo.RunClassification(image, classes: 1);
 
-            // Draw results (optional)
+            // 绘制结果（可选）
             image.Draw(results, _drawingOptions);
 
-            // If using SKImage, the Draw method returns a new SKBitmap with the drawn results.
-            // Example:
+            // 如果使用 SKImage，Draw 方法返回一个带有绘制结果的新 SKBitmap。
+            // 示例：
             // using var resultImage = image.Draw(results, _drawingOptions);
 
-            // Save image (optional)
+            // 保存图像（可选）
             var fileName = Path.Combine(_outputFolder, "Classification.jpg");
             image.Save(fileName, SKEncodedImageFormat.Jpeg, 80);
 
@@ -121,15 +121,15 @@ namespace ClassificationDemo
 
         private static void SetDrawingOptions()
         {
-            // Set options for drawing
+            // 设置绘制选项
             _drawingOptions = new ClassificationDrawingOptions
             {
-                // SKTypeface defines the font used for text rendering.
-                // SKTypeface.Default uses the system default font.
-                // To load a custom font:
-                //   - Use SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) to load by font family name (if installed).
-                //   - Use SKTypeface.FromFile("path/to/font.ttf") to load a font directly from a file.
-                // Example:
+                // SKTypeface 定义用于文本渲染的字体。
+                // SKTypeface.Default 使用系统默认字体。
+                // 加载自定义字体：
+                //   - 使用 SKTypeface.FromFamilyName("fontFamilyName", SKFontStyle) 按字体系列名称加载（如果已安装）。
+                //   - 使用 SKTypeface.FromFile("path/to/font.ttf") 直接从文件加载字体。
+                // 示例：
                 //   Font = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal)
                 //   Font = SKTypeface.FromFile("C:\\Fonts\\CustomFont.ttf")
                 Font = SKTypeface.Default,

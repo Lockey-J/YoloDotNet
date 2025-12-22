@@ -5,26 +5,26 @@
 namespace YoloDotNet.Trackers
 {
     /// <summary>
-    /// LAPJV (Linear Assignment Problem using Jonker-Volgenant algorithm) solver for rectangular cost matrices.
-    /// Finds the best way to match items from two groups with the lowest total cost.
-    /// The "cost" shows how bad a match is; a lower cost means a better match.
+    /// LAPJV（使用 Jonker-Volgenant 算法的线性分配问题）求解器，用于矩形成本矩阵。
+    /// 找到以最低总成本匹配两组项目的最佳方式。
+    /// "成本"表示匹配的糟糕程度；成本越低意味着匹配越好。
     /// </summary>
     public static class LAPJV
     {
-        // Minimum tolerance for what counts as zero, to handle small floating-point errors
-        // when checking for zero-reduced costs (used to identify candidate assignments).
+        // 最小容差值，用于判断什么算作零，以处理检查零约简成本时的微小浮点误差
+        //（用于识别候选分配）。
         private const float BASE_EPSILON = 1e-6f;
 
         private const float PAD_MULTIPLIER = 10f;
         private const float PAD_OFFSET = 1f;
 
         /// <summary>
-        /// Solves the linear assignment problem minimizing total cost.
+        /// 求解线性分配问题以最小化总成本。
         /// </summary>
-        /// <param name="costMatrix">Input cost matrix (rows x columns).</param>
+        /// <param name="costMatrix">输入成本矩阵（行 x 列）。</param>
         /// <returns>
-        /// Assignment array: assigned column index for each row (or -1 if unassigned).
-        /// The returned array length equals the number of input rows.
+        /// 分配数组：每行分配的列索引（如果未分配则为 -1）。
+        /// 返回数组的长度等于输入行数。
         /// </returns>
         public static int[] Solve(float[,] costMatrix)
         {
@@ -58,21 +58,19 @@ namespace YoloDotNet.Trackers
         }
 
         /// <summary>
-        /// Pads the cost matrix to make it square (same number of rows and columns)
-        /// by adding extra rows or columns filled with large penalty values.
-        /// This ensures the assignment algorithm can work even if the two groups
-        /// have different sizes.
+        /// 通过添加填充大量惩罚值的额外行或列，将成本矩阵填充为方阵（行数和列数相同）。
+        /// 这确保了即使两组大小不同，分配算法也能正常工作。
         /// </summary>
         private static float[,] PadCostMatrix(float[,] costMatrix, int nRows, int nCols, int n, out float maxCost)
         {
-            // Create a new square matrix of size n x n (n = max of rows and columns)
+            // 创建一个新的 n x n 方阵（n = 行数和列数的最大值）
             float[,] cost = new float[n, n];
 
-            // Initialize maxCost to the smallest possible float value
+            // 将 maxCost 初始化为可能的最小浮点值
             maxCost = float.MinValue;
 
-            // Copy the original cost matrix into the new square matrix
-            // Also find the maximum cost value for later use
+            // 将原始成本矩阵复制到新的方阵中
+            // 同时查找最大成本值以供后续使用
             for (int i = 0; i < nRows; i++)
             {
                 for (int j = 0; j < nCols; j++)
@@ -81,25 +79,25 @@ namespace YoloDotNet.Trackers
                     cost[i, j] = val;
 
                     if (val > maxCost)
-                        maxCost = val; // Keep track of the highest cost value found
+                        maxCost = val; // 跟踪找到的最高成本值
                 }
             }
 
-            // Calculate a large penalty cost (bigM) to assign for padded cells (dummy rows/columns)
-            // This value is set higher than any real cost to discourage matching with dummy entries
+            // 计算分配给填充单元格（虚拟行/列）的大惩罚成本 (bigM)
+            // 此值设置得高于任何实际成本，以阻止与虚拟条目的匹配
             float bigM = (maxCost * PAD_MULTIPLIER) + PAD_OFFSET;
 
-            // Fill the bottom rows (dummy rows) with bigM penalty cost
+            // 用 bigM 惩罚成本填充底部行（虚拟行）
             for (int i = nRows; i < n; i++)
                 for (int j = 0; j < n; j++)
                     cost[i, j] = bigM;
 
-            // Fill the rightmost columns (dummy columns) with bigM penalty cost
+            // 用 bigM 惩罚成本填充最右列（虚拟列）
             for (int i = 0; i < n; i++)
                 for (int j = nCols; j < n; j++)
                     cost[i, j] = bigM;
 
-            // Return the new square cost matrix padded with big penalty costs
+            // 返回填充了大惩罚成本的新方阵成本矩阵
             return cost;
         }
 
