@@ -56,46 +56,55 @@ namespace YoloDotNet.Core
             {
                 var pinnedBuffer = _pinnedMemoryPool.Rent();
 
-                var normalizedPixelsFloatBuffer = ArrayPool<float>.Shared.Rent(_inputShapeSize);
-                var normalizedPixelsUshortBuffer = ArrayPool<ushort>.Shared.Rent(_inputShapeSize);
-
-                try
+                try //
                 {
-                    // 将图像调整大小为模型输入大小并存储在固定缓冲区中以加快访问速度
-                    var originalImageSize = YoloOptions.ImageResize == ImageResize.Proportional
-                        ? image.ResizeImageProportional(YoloOptions.SamplingOptions, pinnedBuffer)
-                        : image.ResizeImageStretched(YoloOptions.SamplingOptions, pinnedBuffer);
+                    // Resize image to model input size and store in pinned buffer for faster access
+                    var originalImageSize =
+                        YoloOptions.ImageResize == ImageResize.Proportional
+                            ? image.ResizeImageProportional(YoloOptions.SamplingOptions, pinnedBuffer)
+                            : image.ResizeImageStretched(YoloOptions.SamplingOptions, pinnedBuffer);
 
-                    // 声明结构体来保存推理结果
                     InferenceResult inferenceResult;
 
-                    // 使用选定的执行提供程序和模型数据类型运行推理
                     if (OnnxModel.ModelDataType == ModelDataType.Float16)
                     {
-                        pinnedBuffer.Pointer.NormalizePixelsToArray(_inputShape, _inputShapeSize, normalizedPixelsUshortBuffer);
-                        inferenceResult = YoloOptions.ExecutionProvider.Run<ushort>(normalizedPixelsUshortBuffer);
+                        var pixelBuffer = ArrayPool<ushort>.Shared.Rent(_inputShapeSize);
+
+                        try
+                        {
+                            pinnedBuffer.Pointer.NormalizePixelsToArray(_inputShape, _inputShapeSize, pixelBuffer);
+                            inferenceResult = YoloOptions.ExecutionProvider.Run<ushort>(pixelBuffer);
+                        }
+                        finally
+                        {
+                            ArrayPool<ushort>.Shared.Return(pixelBuffer, clearArray: false);
+                        }
                     }
                     else
                     {
-                        pinnedBuffer.Pointer.NormalizePixelsToArray(_inputShape, _inputShapeSize, normalizedPixelsFloatBuffer);
-                        inferenceResult = YoloOptions.ExecutionProvider.Run<float>(normalizedPixelsFloatBuffer);
+                        var pixelBuffer = ArrayPool<float>.Shared.Rent(_inputShapeSize);
+
+                        try
+                        {
+                            pinnedBuffer.Pointer.NormalizePixelsToArray(_inputShape, _inputShapeSize, pixelBuffer);
+                            inferenceResult = YoloOptions.ExecutionProvider.Run<float>(pixelBuffer);
+                        }
+                        finally
+                        {
+                            ArrayPool<float>.Shared.Return(pixelBuffer, clearArray: false);
+                        }
                     }
 
-                    // 将原始图像大小附加到推理结果，用于计算到原始图像大小的边界框。
+                    // Attach original image size for downstream box scaling
                     inferenceResult.ImageOriginalSize = originalImageSize;
 
                     return inferenceResult;
                 }
-                finally
-                {
-                    // 为了性能，将租用的缓冲区返回到各自的池中而不清除。
-                    // 警告：仅在下一次使用时数据被覆盖的情况下才禁用清除，以避免数据泄漏！
-                    ArrayPool<float>.Shared.Return(normalizedPixelsFloatBuffer, false);
-                    ArrayPool<ushort>.Shared.Return(normalizedPixelsUshortBuffer, false);
-
+                finally //
+                { //
                     _pinnedMemoryPool.Return(pinnedBuffer);
-                }
-            }
+                } //
+            } //
         }
 
         #region Helper methods
