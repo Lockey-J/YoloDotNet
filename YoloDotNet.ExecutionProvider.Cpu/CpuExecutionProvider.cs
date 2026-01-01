@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
@@ -24,24 +24,26 @@ namespace YoloDotNet.ExecutionProvider.Cpu
         /// <summary>
         /// 构造用于在 CPU 上运行 ONNX 模型的 CpuExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        public CpuExecutionProvider(string model)
+        /// <param name="model">ONNX 模型文件路径。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public CpuExecutionProvider(string model, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model);
+            InitializeYolo(model, customOnnxDataRecord);
         }
 
         /// <summary>
         /// 构造用于在 CPU 上运行 ONNX 模型的 CpuExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        public CpuExecutionProvider(byte[] model)
+        /// <param name="model">ONNX 模型字节数组。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public CpuExecutionProvider(byte[] model, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model);
+            InitializeYolo(model, customOnnxDataRecord);
         }
         #endregion
 
         #region Initialization
-        private void InitializeYolo(object model)
+        private void InitializeYolo(object model, OnnxDataRecord? customOnnxDataRecord)
         {
             ConfigureOrtEnv();
 
@@ -57,7 +59,16 @@ namespace YoloDotNet.ExecutionProvider.Cpu
                 ? new InferenceSession(modelBytes, options)
                 : new InferenceSession((string)model, options);
 
-            GetOnnxMetaData();
+            // 使用自定义 OnnxDataRecord 或自动提取
+            if (customOnnxDataRecord != null)
+            {
+                OnnxData = customOnnxDataRecord;
+            }
+            else
+            {
+                GetOnnxMetaData();
+            }
+
             AllocateOutputBuffers();
 
             _runOptions = new RunOptions();

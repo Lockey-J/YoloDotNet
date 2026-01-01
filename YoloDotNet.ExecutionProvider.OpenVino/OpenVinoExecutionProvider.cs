@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
@@ -25,26 +25,28 @@ namespace YoloDotNet.ExecutionProvider.OpenVino
         /// <summary>
         /// 构造用于使用 Intel GPU 运行 ONNX 模型的 OpenVinoExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="openVino"></param>
-        public OpenVinoExecutionProvider(string model, OpenVino? openVino = null)
+        /// <param name="model">ONNX 模型文件路径。</param>
+        /// <param name="openVino">OpenVINO 配置。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public OpenVinoExecutionProvider(string model, OpenVino? openVino = null, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model, openVino);
+            InitializeYolo(model, openVino, customOnnxDataRecord);
         }
 
         /// <summary>
         /// 构造用于使用 Intel GPU 运行 ONNX 模型的 OpenVinoExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="openVino"></param>
-        public OpenVinoExecutionProvider(object model, OpenVino? openVino = null)
+        /// <param name="model">ONNX 模型字节数组。</param>
+        /// <param name="openVino">OpenVINO 配置。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public OpenVinoExecutionProvider(object model, OpenVino? openVino = null, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model, openVino);
+            InitializeYolo(model, openVino, customOnnxDataRecord);
         }
         #endregion
 
         #region Initialization
-        private void InitializeYolo(object model, OpenVino? openVino)
+        private void InitializeYolo(object model, OpenVino? openVino, OnnxDataRecord? customOnnxDataRecord)
         {
             ConfigureOrtEnv();
 
@@ -56,7 +58,16 @@ namespace YoloDotNet.ExecutionProvider.OpenVino
 
             _runOptions = new RunOptions();
 
-            GetOnnxMetaData();
+            // 使用自定义 OnnxDataRecord 或自动提取
+            if (customOnnxDataRecord != null)
+            {
+                OnnxData = customOnnxDataRecord;
+            }
+            else
+            {
+                GetOnnxMetaData();
+            }
+
             AllocateOutputBuffers();
 
             _inputShape = [.. OnnxData.InputShape.Select(i => (long)i)];

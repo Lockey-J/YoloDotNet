@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2025 Niklas Swärd
 // https://github.com/NickSwardh/YoloDotNet
 
@@ -26,23 +26,25 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         /// <summary>
         /// 构造用于使用 CUDA 和可选的 TensorRT 运行 ONNX 模型的 CudaExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="gpuId"></param>
-        /// <param name="trtConfig"></param>
-        public CudaExecutionProvider(string model, int gpuId = 0, TensorRt? trtConfig = null)
+        /// <param name="model">ONNX 模型文件路径。</param>
+        /// <param name="gpuId">GPU 设备 ID。</param>
+        /// <param name="trtConfig">TensorRT 配置。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public CudaExecutionProvider(string model, int gpuId = 0, TensorRt? trtConfig = null, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model, gpuId, trtConfig);
+            InitializeYolo(model, gpuId, trtConfig, customOnnxDataRecord);
         }
 
         /// <summary>
         /// 重载：构造用于使用 CUDA 和可选的 TensorRT 运行 ONNX 模型的 CudaExecutionProvider。
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="gpuId"></param>
-        /// <param name="trtConfig"></param>
-        public CudaExecutionProvider(byte[] model, int gpuId = 0, TensorRt? trtConfig = null)
+        /// <param name="model">ONNX 模型字节数组。</param>
+        /// <param name="gpuId">GPU 设备 ID。</param>
+        /// <param name="trtConfig">TensorRT 配置。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录，如果为 null 则自动从模型提取。</param>
+        public CudaExecutionProvider(byte[] model, int gpuId = 0, TensorRt? trtConfig = null, OnnxDataRecord? customOnnxDataRecord = null)
         {
-            InitializeYolo(model, gpuId, trtConfig);
+            InitializeYolo(model, gpuId, trtConfig, customOnnxDataRecord);
         }
         #endregion
 
@@ -50,10 +52,11 @@ namespace YoloDotNet.ExecutionProvider.Cuda
         /// <summary>
         /// 初始化 ONNX Runtime 会话，配置 CUDA 执行提供程序并分配资源。
         /// </summary>
-        /// <param name="model"></param>
-        /// <param name="gpuId"></param>
-        /// <param name="trtConfig"></param>
-        private void InitializeYolo(object model, int gpuId, TensorRt? trtConfig)
+        /// <param name="model">ONNX 模型。</param>
+        /// <param name="gpuId">GPU 设备 ID。</param>
+        /// <param name="trtConfig">TensorRT 配置。</param>
+        /// <param name="customOnnxDataRecord">自定义的 ONNX 数据记录。</param>
+        private void InitializeYolo(object model, int gpuId, TensorRt? trtConfig, OnnxDataRecord? customOnnxDataRecord)
         {
             ConfigureOrtEnv();
 
@@ -64,7 +67,16 @@ namespace YoloDotNet.ExecutionProvider.Cuda
                 ? new InferenceSession(modelBytes, options)
                 : new InferenceSession((string)model, options);
 
-            GetOnnxMetaData();
+            // 使用自定义 OnnxDataRecord 或自动提取
+            if (customOnnxDataRecord != null)
+            {
+                OnnxData = customOnnxDataRecord;
+            }
+            else
+            {
+                GetOnnxMetaData();
+            }
+
             AllocateOutputBuffers();
 
             _runOptions = new RunOptions();
