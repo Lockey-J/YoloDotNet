@@ -4,12 +4,12 @@ All notable changes to **YoloDotNet** will be documented in this file.
 
 ## [4.0.0] — Modular Execution Providers
 
-### 🚨 Breaking Changes
+### Breaking Changes
 - Execution providers are no longer bundled with the core package.
 - Consumers **must reference exactly one execution provider NuGet package**.
 - Provider setup code must be updated when upgrading from v3.x.
 
-### ✨ Added
+### Added
 - Fully modular execution provider architecture.
 - New execution providers:
   - **CPU** (baseline, cross-platform)
@@ -20,7 +20,7 @@ All notable changes to **YoloDotNet** will be documented in this file.
 - Improved GPU execution behavior and predictability.
 - Clear separation of native ONNX Runtime dependencies per provider.
 
-### 🔧 Changed
+### Changed
 - Core package is now execution-provider agnostic.
 - Dependency graph simplified for predictable deployment.
 - CUDA provider exposes clearer and more explicit GPU behavior.
