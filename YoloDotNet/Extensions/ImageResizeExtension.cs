@@ -4,7 +4,7 @@
 
 namespace YoloDotNet.Extensions
 {
-    internal static class ImageResizeExtension
+    public static class ImageResizeExtension
     {
         /// <summary>
         /// 通过拉伸输入图像以适应模型输入大小来调整图像尺寸，返回指向 RGB888x 像素数据的指针和新尺寸。
