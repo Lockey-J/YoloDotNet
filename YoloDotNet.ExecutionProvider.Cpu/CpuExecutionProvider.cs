@@ -73,7 +73,7 @@ namespace YoloDotNet.ExecutionProvider.Cpu
 
             _runOptions = new RunOptions();
 
-            // Set the input shape for creating tensors during inference.
+            //设置在推理过程中创建张量的输入形状。
             _inputShape = [.. OnnxData.InputShape.Select(i => (long)i)];
         }
         #endregion

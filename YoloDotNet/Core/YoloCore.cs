@@ -58,7 +58,7 @@ namespace YoloDotNet.Core
 
                 try
                 {
-                    // Resize image to model input size and store in pinned buffer for faster access
+                    // 将图像大小调整为模型输入大小，并存储在固定缓冲区中，以便更快地访问
                     var originalImageSize =
                         YoloOptions.ImageResize == ImageResize.Proportional
                             ? image.ResizeImageProportional(YoloOptions.SamplingOptions, pinnedBuffer)
@@ -95,7 +95,7 @@ namespace YoloDotNet.Core
                         }
                     }
 
-                    // Attach original image size for downstream box scaling
+                    // 附加原始图像大小用于下游盒缩放
                     inferenceResult.ImageOriginalSize = originalImageSize;
 
                     return inferenceResult;

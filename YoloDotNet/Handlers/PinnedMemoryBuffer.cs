@@ -24,7 +24,7 @@ namespace YoloDotNet.Handlers
             _handle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
             Pointer = _handle.AddrOfPinnedObject();
 
-            // Wrap the pinned buffer in a SKBitmap so we can draw into it
+            // 将固定缓冲区包装在SKBitmap中，以便我们可以在其中绘制
             TargetBitmap = new SKBitmap();
 
             if (!TargetBitmap.InstallPixels(imageInfo, Pointer, imageInfo.RowBytes))
